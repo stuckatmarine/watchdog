@@ -1,10 +1,10 @@
 ## Fetch the latest user prefrences
 ---
-URL: `https://example.com/user/prefrences/:mpu_id`
-Method: `GET`
-URL Param: `mpu_id=[integer]`
-Data Params: `None`
-Success Code: `200`
+URL: `https://example.com/user/prefrences/:mpu_id` </br>
+Method: `GET` </br>
+URL Param: `mpu_id=[integer]` </br>
+Data Params: `None` </br>
+Success Code: `200` </br>
 Success Content: 
 ```json 
 {
@@ -12,16 +12,16 @@ Success Content:
                    {"dog": 2, "cat": 1}]
 }
 ```
-Error Code: `404`
-Error Content: `{ "error" : "MPU invalid" }`
+Error Code: `404` </br> 
+Error Content: `{ "error" : "MPU invalid" }` </br>
 
 
 ## Create a User
 ---
-URL: `https://example.com/user/`
-Method: `POST`
-URL Param: `None`
-Data Params:
+URL: `https://example.com/user/` </br>
+Method: `POST` </br>
+URL Param: `None` </br>
+Data Params: 
 ```json
 {
     "username": "sample_user",
@@ -30,17 +30,17 @@ Data Params:
     "phone_num": 15417543010
 }
 ```
-Success Code: `200`
-Success Content: `{ "status": "OK" }`
-Error Code: `404`
-Error Content: `{ "error" : "username already exists" }`
-
+Success Code: `200` </br>
+Success Content: `{ "status": "OK" }` </br>
+Error Code: `404` </br>
+Error Content: `{ "error" : "username already exists" }` </br>
+ 
 
 ## Update a Users Prefrences
 ---
-URL: `https://example.com/user/prefrences/:username`
-Method: `PUT`
-URL Param: `username=[string]`
+URL: `https://example.com/user/prefrences/:username` </br>
+Method: `PUT` </br>
+URL Param: `username=[string]` </br>
 Data Params:
 ```json
 {
@@ -50,46 +50,46 @@ Data Params:
     "contact_email": false
 }
 ```
-Success Code: `200`
-Success Content: `{ "status": "OK" }`
-Error Code: `404`
-Error Content: `{ "error" : "username does not exist" }`
+Success Code: `200` </br>
+Success Content: `{ "status": "OK" }` </br>
+Error Code: `404` </br>
+Error Content: `{ "error" : "username does not exist" }` </br>
 
 
 ## Add MPU to a User
 ---
-URL: `https://example.com/user/mpu/:username`
-Method: `PUT`
-URL Param: `username=[string]`
+URL: `https://example.com/user/mpu/:username`</br>
+Method: `PUT` </br>
+URL Param: `username=[string]` </br>
 Data Params:
 ```json
 {
     "mpu_id": [38748937489237]
 }
 ```
-Success Code: `200`
-Success Content: `{ "status": "OK" }`
-Error Code: `404`
-Error Content: `{ "error" : "username does not exist" }`
+Success Code: `200` </br>
+Success Content: `{ "status": "OK" }` </br>
+Error Code: `404` </br>
+Error Content: `{ "error" : "username does not exist" }` </br>
 
 
 ## Delete a User
 ---
-URL: `https://example.com/user/:username`
-Method: `DELETE`
-URL Param: `username=[string]`
-Data Params: `None`
-Success Code: `200`
-Success Content: `{ "status": "OK" }`
-Error Code: `404`
-Error Content: `{ "error" : "username does not exist" }`
+URL: `https://example.com/user/:username` </br>
+Method: `DELETE` </br>
+URL Param: `username=[string]` </br>
+Data Params: `None` </br>
+Success Code: `200` </br>
+Success Content: `{ "status": "OK" }` </br>
+Error Code: `404` </br>
+Error Content: `{ "error" : "username does not exist" }` </br>
 
 
 ## MPU Notification Trigger
 ---
-URL: `https://example.com/user/trigger/:mpu_id`
-Method: `POST`
-URL Param: `mpu_id=[integer]`
+URL: `https://example.com/user/trigger/:mpu_id` </br>
+Method: `POST` </br>
+URL Param: `mpu_id=[integer]` </br>
 Data Params:
 ```json 
 {
@@ -97,7 +97,7 @@ Data Params:
     "metadata": [{"dog": 70.232}, {"cat": 94.33}]
 }
 ```
-Success Code: `200`
-Success Content: `{ "status": "OK" }`
-Error Code: `404`
-Error Content: `{ "error" : "MPU invalid" }`
+Success Code: `200` </br>
+Success Content: `{ "status": "OK" }` </br>
+Error Code: `404` </br>
+Error Content: `{ "error" : "MPU invalid" }` </br>
