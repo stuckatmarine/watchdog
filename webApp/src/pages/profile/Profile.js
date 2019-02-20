@@ -14,10 +14,17 @@ import {
 } from 'reactstrap';
 
 import Widget from '../../components/Widget';
-
+import me from '../../data/queries/me';
 import s from './Profile.scss';
 
 class Profile extends PureComponent {
+  constructor(props){
+    super(props);
+    this.state = {
+      username: me.type.name,
+    }
+  }
+
   onSubmit(e) { // eslint-disable-line
     e.preventDefault();
   }
@@ -41,8 +48,8 @@ class Profile extends PureComponent {
             >
               <Form onSubmit={this.onSubmit}>
                 <FormGroup>
-                  <Label for="input-name">Name</Label>
-                  <Input size="lg" type="text" name="name" id="input-name"/>
+                  <Label for="input-name">Username</Label>
+                  <Input size="lg" type="text" name="name" id="input-name" value={this.state.username}/>
                 </FormGroup>
                 <FormGroup>
                   <Label for="input-email">Email</Label>
