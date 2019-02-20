@@ -20,103 +20,107 @@ class Tables extends Component {
     super(props);
 
     this.state = {
-      kind: '',
-      data: [],
+      data: [''],
 
       tableStyles: [
-        {
-          id: 1,
-          picture: require('../../images/tables/1.jpg'), // eslint-disable-line global-require
-          description: 'Palo Alto',
-          info: {
-            type: 'JPEG',
-            dimensions: '200x150',
-          },
-          date: new Date('September 14, 2012'),
-          size: '45.6 KB',
-          progress: {
-            percent: 29,
-            colorClass: 'success',
-          },
-        },
-        {
-          id: 2,
-          picture: require('../../images/tables/2.jpg'), // eslint-disable-line global-require
-          description: 'The Sky',
-          info: {
-            type: 'PSD',
-            dimensions: '2400x1455',
-          },
-          date: new Date('November 14, 2012'),
-          size: '15.3 MB',
-          progress: {
-            percent: 33,
-            colorClass: 'warning',
-          },
-        },
-        {
-          id: 3,
-          picture: require('../../images/tables/3.jpg'), // eslint-disable-line global-require
-          description: 'Down the road',
-          label: {
-            colorClass: 'success',
-            text: 'INFO!',
-          },
-          info: {
-            type: 'JPEG',
-            dimensions: '200x150',
-          },
-          date: new Date('September 14, 2012'),
-          size: '49.0 KB',
-          progress: {
-            percent: 38,
-            colorClass: 'inverse',
-          },
-        },
-        {
-          id: 4,
-          picture: require('../../images/tables/4.jpg'), // eslint-disable-line global-require
-          description: 'The Edge',
-          info: {
-            type: 'PNG',
-            dimensions: '210x160',
-          },
-          date: new Date('September 15, 2012'),
-          size: '69.1 KB',
-          progress: {
-            percent: 17,
-            colorClass: 'danger',
-          },
-        },
-        {
-          id: 5,
-          picture: require('../../images/tables/5.jpg'), // eslint-disable-line global-require
-          description: 'Fortress',
-          info: {
-            type: 'JPEG',
-            dimensions: '1452x1320',
-          },
-          date: new Date('October 1, 2012'),
-          size: '2.3 MB',
-          progress: {
-            percent: 41,
-            colorClass: 'primary',
-          },
-        },
+        { info: {type: '', dimensions: '', }, date: new Date(''), progress: { percent: 0, }, },
+        { info: {type: '', dimensions: '', }, date: new Date(''), progress: { percent: 0, }, },
+        { info: {type: '', dimensions: '', }, date: new Date(''), progress: { percent: 0, }, },
+        { info: {type: '', dimensions: '', }, date: new Date(''), progress: { percent: 0, }, },
+        { info: {type: '', dimensions: '', }, date: new Date(''), progress: { percent: 0, }, },
       ],
     };
   }
 
   componentDidMount() {
-    axios.get('http://127.0.0.1:5000/user/notifications/user')
-      .then(response => console.log(response))
-      .then(({ data })=> {
+    this.getData();
+  }
+
+  getData(){
+    axios.get('http://127.0.0.1:5000/user/notifications/username')
+      .then(response =>
         this.setState({
-          kind: data.kind,
-          data: data.data.children
-        });
-      })
-      .catch((err)=> {})
+          tableStyles: [{
+            id: 1,
+            picture: response.data["0"].photo,
+            description: response.data["0"].description,
+            info: {
+              type: 'JPEG',
+              dimensions: '200x150',
+            },
+            date: new Date('September 14, 2012'),
+            unit: response.data["0"].mpu_id,
+            progress: {
+              percent: 29,
+              colorClass: 'success',
+            },
+          },
+            {
+              id: 2,
+              picture: response.data["1"].photo,
+              description: response.data["1"].description,
+              info: {
+                type: 'PSD',
+                dimensions: '2400x1455',
+              },
+              date: new Date('November 14, 2012'),
+              unit: response.data["1"].mpu_id,
+              progress: {
+                percent: 33,
+                colorClass: 'warning',
+              },
+            },
+            {
+              id: 3,
+              picture: response.data["2"].photo,
+              description: response.data["2"].description,
+              label: {
+                colorClass: 'success',
+                text: 'INFO!',
+              },
+              info: {
+                type: 'JPEG',
+                dimensions: '200x150',
+              },
+              date: new Date('September 14, 2012'),
+              unit: response.data["2"].mpu_id,
+              progress: {
+                percent: 38,
+                colorClass: 'inverse',
+              },
+            },
+            {
+              id: 4,
+              picture: response.data["3"].photo,
+              description: response.data["3"].description,
+              info: {
+                type: 'PNG',
+                dimensions: '210x160',
+              },
+              date: new Date('September 15, 2012'),
+              unit: response.data["3"].mpu_id,
+              progress: {
+                percent: 17,
+                colorClass: 'danger',
+              },
+            },
+            {
+              id: 5,
+              picture: response.data["4"].photo,
+              description: response.data["4"].description,
+              info: {
+                type: 'JPEG',
+                dimensions: '1452x1320',
+              },
+              date: new Date('October 1, 2012'),
+              unit: response.data["4"].mpu_id,
+              progress: {
+                percent: 41,
+                colorClass: 'primary',
+              },
+            },
+          ]
+        }))
   }
 
   parseDate(date) {
@@ -126,17 +130,18 @@ class Tables extends Component {
 
   render() {
     return (
+      //<div> {this.state.data} </div>
       <div>
         <Breadcrumb>
-          <BreadcrumbItem>YOU ARE HERE</BreadcrumbItem>
-          <BreadcrumbItem active>Tables Basic</BreadcrumbItem>
+          <BreadcrumbItem>Home</BreadcrumbItem>
+          <BreadcrumbItem active>Notifications</BreadcrumbItem>
         </Breadcrumb>
-        <h1 className="page-title mb-lg">Tables - <span className="fw-semi-bold">Basic</span></h1>
+        <h1 className="page-title mb-lg">Notifications</h1>
         <Row>
           <Col sm={12}>
             <Widget
               title={<h5>
-                Table <span className="fw-semi-bold">Styles</span>
+                <span className="fw-semi-bold"></span>
               </h5>} settings close
             >
               <Table borderless className={s.mainTable}>
@@ -147,7 +152,7 @@ class Tables extends Component {
                   <th>Description</th>
                   <th className="hidden-sm-down">Info</th>
                   <th className="hidden-sm-down">Date</th>
-                  <th className="hidden-sm-down">Size</th>
+                  <th className="hidden-sm-down">unit</th>
                   <th />
                 </tr>
                 </thead>
@@ -185,7 +190,7 @@ class Tables extends Component {
                         {this.parseDate(row.date)}
                       </td>
                       <td className="text-semi-muted">
-                        {row.size}
+                        {row.unit}
                       </td>
                       <td className="width-150">
                         <Progress

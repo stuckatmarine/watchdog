@@ -5,6 +5,7 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
+# app.run(threaded=True)
 
 def connect(collection):
     try:
@@ -24,10 +25,13 @@ def get_user_notifications(username):
     user = collection.find_one({"username": username})
     mpu_ids = user['mpu_id']
     client.close()
-    
+
     client, collection = connect('notifications')
     ##TODO: Add ordering
     notifications = collection.find({"mpu_id": {"$in": mpu_ids}}).limit(5)
     client.close()
-    
+
     return dumps(notifications)
+
+if __name__ == '__main__':
+    app.run()
