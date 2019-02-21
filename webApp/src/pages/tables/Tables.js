@@ -13,6 +13,7 @@ import {
 
 import Widget from '../../components/Widget';
 import s from './Static.scss';
+import me from '../../data/queries/me';
 
 class Tables extends Component {
 
@@ -37,7 +38,7 @@ class Tables extends Component {
   }
 
   getData(){
-    axios.get('http://127.0.0.1:5000/user/notifications/username')
+    axios.get('http://127.0.0.1:5000/user/notifications/' + me.type.name)
       .then(response =>
         this.setState({
           tableStyles: [{
