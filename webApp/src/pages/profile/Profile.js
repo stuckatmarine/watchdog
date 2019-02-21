@@ -37,7 +37,17 @@ class Profile extends PureComponent {
       contact_app: false,
       contact_web: false,
       contact_email: false,
-    }
+    };
+    this.onSubmit= this.onSubmit.bind(this);
+    this.handleEmailChange = this.handleEmailChange.bind(this);
+    this.handleFirstChange = this.handleFirstChange .bind(this);
+    this.handleLastChange = this.handleLastChange.bind(this);
+    this.handlePhoneChange = this.handlePhoneChange.bind(this);
+    this.handleAddressChange = this.handleAddressChange.bind(this);
+    this.handleAddress2Change = this.handleAddress2Change.bind(this);
+    this.handleCityChange = this.handleCityChange.bind(this);
+    this.handleProvinceChange = this.handleProvinceChange.bind(this);
+    this.handlePostalCodeChange = this.handlePostalCodeChange.bind(this);
   }
 
   componentDidMount() {
@@ -45,7 +55,7 @@ class Profile extends PureComponent {
   }
 
   getData(){
-    axios.get('http://127.0.0.1:5000/user/prefrences/' + me.type.name)
+    axios.get(`http://127.0.0.1:5000/user/prefrences/${  me.type.name}`)
       .then(response =>
         this.setState({
           email: response.data.email,
@@ -88,12 +98,56 @@ class Profile extends PureComponent {
     }));
   };
 
+  handleEmailChange (e) {
+    e.preventDefault();
+    this.setState({email: e.target.value});
+  }
+
+  handleFirstChange (e) {
+    e.preventDefault();
+    this.setState({first_name: e.target.value});
+  }
+
+  handleLastChange (e) {
+    e.preventDefault();
+    this.setState({last_name: e.target.value});
+  }
+
+  handlePhoneChange (e) {
+    e.preventDefault();
+    this.setState({phone: e.target.value});
+  }
+
+  handleAddress2Change (e) {
+    e.preventDefault();
+    this.setState({address2: e.target.value});
+  }
+
+  handleAddressChange (e) {
+    e.preventDefault();
+    this.setState({address: e.target.value});
+  }
+
+  handleCityChange (e) {
+    e.preventDefault();
+    this.setState({city: e.target.value});
+  }
+
+  handleProvinceChange (e) {
+    e.preventDefault();
+    this.setState({province: e.target.value});
+  }
+
+  handlePostalCodeChange (e) {
+    e.preventDefault();
+    this.setState({postal_code: e.target.value});
+  }
+
   onSubmit(e) {
     e.preventDefault();
-    //this.setState({ address: this.state.address });
     axios({
       method: 'post',
-      url: "http://127.0.0.1:5000/user/prefrences/" + me.type.name,
+      url: `http://127.0.0.1:5000/user/prefrences/${  me.type.name}`,
       data: {
         email: this.state.email,
         first_name: this.state.first_name,
@@ -128,7 +182,7 @@ class Profile extends PureComponent {
             <Widget
               title={
                 <h5>
-                  Edit Profile <span className="fw-semi-bold"></span>
+                  Edit Profile <span className="fw-semi-bold" />
                 </h5>
               }
             >
@@ -143,7 +197,7 @@ class Profile extends PureComponent {
                   <Col>
                     <FormGroup>
                       <Label for="input-email">Email</Label>
-                      <Input size="lg" type="email" name="email" id="input-email" defaultValue={this.state.email}/>
+                      <Input size="lg" type="email" name="email" id="input-email" defaultValue={this.state.email} onChange={this.handleEmailChange}/>
                     </FormGroup>
                   </Col>
                 </Row>
@@ -151,19 +205,19 @@ class Profile extends PureComponent {
                   <Col sm={3}>
                   <FormGroup>
                     <Label for="input-first-name">First Name</Label>
-                    <Input size="lg" type="text" name="first" id="input-first-name" defaultValue={this.state.first_name}/>
+                    <Input size="lg" type="text" name="first" id="input-first-name" defaultValue={this.state.first_name} onChange={this.handleFirstChange}/>
                   </FormGroup>
                   </Col>
                   <Col sm={3}>
                   <FormGroup>
                     <Label for="input-last-name">Last Name</Label>
-                    <Input size="lg" type="text" name="last" id="input-last-name" defaultValue={this.state.last_name}/>
+                    <Input size="lg" type="text" name="last" id="input-last-name" defaultValue={this.state.last_name} onChange={this.handleLastChange}/>
                   </FormGroup>
                   </Col>
                   <Col sm={6}>
                   <FormGroup>
                     <Label for="input-phone">Phone Number</Label>
-                    <Input size="lg" type="text" name="phone" id="input-phone" defaultValue={this.state.phone}/>
+                    <Input size="lg" type="text" name="phone" id="input-phone" defaultValue={this.state.phone} onChange={this.handlePhoneChange}/>
                   </FormGroup>
                   </Col>
                 </Row>
@@ -171,7 +225,7 @@ class Profile extends PureComponent {
                   <Col>
                     <FormGroup>
                       <Label for="input-address">Address</Label>
-                      <Input size="lg" type="text" name="address" id="input-address" defaultValue={this.state.address}/>
+                      <Input size="lg" type="text" name="address" id="input-address" defaultValue={this.state.address} onChange={this.handleAddressChange}/>
                     </FormGroup>
                   </Col>
                 </Row>
@@ -179,7 +233,7 @@ class Profile extends PureComponent {
                   <Col>
                     <FormGroup>
                       <Label for="input-address2">Address 2</Label>
-                      <Input size="lg" type="text" name="address2" id="input-address2" defaultValue={this.state.address2}/>
+                      <Input size="lg" type="text" name="address2" id="input-address2" defaultValue={this.state.address2} onChange={this.handleAddress2Change}/>
                     </FormGroup>
                   </Col>
                 </Row>
@@ -187,19 +241,19 @@ class Profile extends PureComponent {
                   <Col>
                     <FormGroup>
                       <Label for="input-city">City</Label>
-                      <Input size="lg" type="text" name="city" id="input-city" defaultValue={this.state.city}/>
+                      <Input size="lg" type="text" name="city" id="input-city" defaultValue={this.state.city} onChange={this.handleCityChange}/>
                     </FormGroup>
                   </Col>
                   <Col>
                     <FormGroup>
                       <Label for="input-province">Province</Label>
-                      <Input size="lg" type="text" name="province" id="input-province" defaultValue={this.state.province}/>
+                      <Input size="lg" type="text" name="province" id="input-province" defaultValue={this.state.province} onChange={this.handleProvinceChange}/>
                     </FormGroup>
                   </Col>
                   <Col>
                     <FormGroup>
                       <Label for="input-postal-code">Postal Code</Label>
-                      <Input size="lg" type="text" name="postal-code" id="input-postal-code" defaultValue={this.state.postal_code}/>
+                      <Input size="lg" type="text" name="postal-code" id="input-postal-code" defaultValue={this.state.postal_code} onChange={this.handlePostalCodeChange}/>
                     </FormGroup>
                   </Col>
                 </Row>

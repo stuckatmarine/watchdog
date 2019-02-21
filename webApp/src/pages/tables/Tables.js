@@ -38,7 +38,7 @@ class Tables extends Component {
   }
 
   getData(){
-    axios.get('http://127.0.0.1:5000/user/notifications/' + me.type.name)
+    axios.get(`http://127.0.0.1:5000/user/notifications/${  me.type.name}`)
       .then(response =>
         this.setState({
           tableStyles: [{
@@ -131,7 +131,7 @@ class Tables extends Component {
 
   render() {
     return (
-      //<div> {this.state.data} </div>
+      // <div> {this.state.data} </div>
       <div>
         <Breadcrumb>
           <BreadcrumbItem>Home</BreadcrumbItem>
@@ -142,7 +142,7 @@ class Tables extends Component {
           <Col sm={12}>
             <Widget
               title={<h5>
-                <span className="fw-semi-bold"></span>
+                <span className="fw-semi-bold" />
               </h5>} settings close
             >
               <Table borderless className={s.mainTable}>
