@@ -15,3 +15,4 @@ Noah can focus on his studies and not worry about his dog.
 Be like Noah.
 
 ## Architecture
+![Watchdog Architecture Diagram](/projectArchitecture.png)
