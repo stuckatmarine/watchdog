@@ -14,6 +14,7 @@ import {
 import Widget from '../../components/Widget';
 import s from './Static.scss';
 import me from '../../data/queries/me';
+import socketIOClient from "socket.io-client";
 
 class Tables extends Component {
 
@@ -30,10 +31,18 @@ class Tables extends Component {
         { info: {type: '', dimensions: '', }, date: new Date(''), progress: { percent: 0, }, },
         { info: {type: '', dimensions: '', }, date: new Date(''), progress: { percent: 0, }, },
       ],
+
+      endpoint: {
+        response: false,
+        endpoint: "http://127.0.0.1:4001"
+      },
     };
   }
 
   componentDidMount() {
+    const { endpoint } = this.state.endpoint;
+    const socket = socketIOClient(endpoint);
+    socket.on("FromAPI", data => this.setState({ response: data }));
     this.getData();
   }
 

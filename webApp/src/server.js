@@ -34,6 +34,8 @@ import { receiveLogin, receiveLogout } from './actions/user';
 import config from './config';
 import assets from './assets.json'; // eslint-disable-line import/no-unresolved
 import theme from './styles/theme.scss';
+import me from "./data/queries/me";
+import axios from 'axios'
 
 const app = express();
 
@@ -82,10 +84,13 @@ if (__DEV__) {
 app.post('/login', (req, res) => {
   // replace with real database check in production
   // const user = graphql.find(req.login, req.password);
+  console.log("user login");
   let user = false;
   const login = req.body.login; // eslint-disable-line
   const password = req.body.password; // eslint-disable-line
-  if (login === 'user' && password === 'password') {
+  axios.get(`http://127.0.0.1:5000/user/verify/` + login + '/' + password)
+    .then(response => user = response.data);
+  if (user) {
     user = { user, login };
   }
 
@@ -252,5 +257,14 @@ if (module.hot) {
   app.hot = module.hot;
   module.hot.accept('./components/App');
 }
+
+
+//
+// Socket for dynamic notifications table
+//--------------------------------------------------------------------------------
+app.post('/notification_trigger', (req, res) => {
+  console.log("IT WORKED")
+});
+
 
 export default app;
