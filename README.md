@@ -16,3 +16,15 @@ Be like Noah.
 
 ## Architecture
 ![Watchdog Architecture Diagram](/projectArchitecture.png)
+
+## Task List
+### First Iteration - Minimum Viable Product
+- [x] object recognition on raspberry pi
+- [x] server to communicate with pi/user/database
+- [x] web app for server/database configuration
+- [ ] Specifiy parameters for user to be notified about
+- [ ] Notify user via email/sms
+
+### Second iteration
+- [ ] Optomize object recognition
+- [ ] Android application user interface for configuration/notifications
