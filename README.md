@@ -10,7 +10,7 @@ Don’t be like Frank. <br/>
 
 Noah has a dog.<br/>
 Noah also has a Watchdog.<br/>
-Noah is notified if his dog digs or would like to be let inside.<br/>
+Noah is notified if his dog digs or would like to be let inside/outside.<br/>
 Noah can focus on his studies and not worry about his dog.<br/>
 Be like Noah.<br/>
 
