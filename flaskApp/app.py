@@ -2,10 +2,12 @@ from pymongo import MongoClient
 from flask import Flask, request, jsonify, Response
 from bson.json_util import dumps
 from flask_cors import CORS
+from flask_socketio import SocketIO
+
 
 app = Flask(__name__)
 CORS(app)
-# app.run(threaded=True)
+socketio = SocketIO(app)
 
 def connect(collection):
     try:
@@ -70,5 +72,23 @@ def update_user_info(username):
     return "Success!"
 
 
+
+@app.route('/user/verify/<username>/<password>', methods=['GET'])
+def verify_user(username, password):
+    client, collection = connect('users')
+    user = collection.find_one({"username": username.lower()})
+    client.close()
+    
+    if user['password'] == password:
+        return 1
+    
+    return 0
+
+@socketio.on('notification')
+def update_notifications(username):
+    print(username)
+    return get_user_notifications(username)
+
 if __name__ == '__main__':
+    #socketio.run(app)
     app.run()

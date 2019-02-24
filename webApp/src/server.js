@@ -259,12 +259,4 @@ if (module.hot) {
 }
 
 
-//
-// Socket for dynamic notifications table
-//--------------------------------------------------------------------------------
-app.post('/notification_trigger', (req, res) => {
-  console.log("IT WORKED")
-});
-
-
 export default app;

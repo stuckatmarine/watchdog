@@ -34,7 +34,9 @@ class Tables extends Component {
 
       endpoint: {
         response: false,
-        endpoint: "http://127.0.0.1:4001"
+        endpoint: "http://127.0.0.1:5000/",
+        username: me.type.name,
+        headers: {"Content-Type" : "application/json"},
       },
     };
   }
@@ -42,12 +44,13 @@ class Tables extends Component {
   componentDidMount() {
     const { endpoint } = this.state.endpoint;
     const socket = socketIOClient(endpoint);
-    socket.on("FromAPI", data => this.setState({ response: data }));
+    console.log(socket);
+    socket.on("notification", response => console.log(response));
     this.getData();
   }
 
   getData(){
-    axios.get(`http://127.0.0.1:5000/user/notifications/${  me.type.name}`)
+    axios.get(`http://127.0.0.1:5000/user/notifications/${me.type.name}`)
       .then(response =>
         this.setState({
           tableStyles: [{
