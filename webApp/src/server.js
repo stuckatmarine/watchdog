@@ -81,29 +81,26 @@ app.use(passport.initialize());
 if (__DEV__) {
   app.enable('trust proxy');
 }
-app.post('/login', (req, res) => {
-  // replace with real database check in production
-  // const user = graphql.find(req.login, req.password);
-  console.log("user login");
-  let user = false;
-  const login = req.body.login; // eslint-disable-line
-  const password = req.body.password; // eslint-disable-line
-  axios.get(`http://127.0.0.1:5000/user/verify/` + login + '/' + password)
-    .then(response => user = response.data);
-  if (user) {
-    user = { user, login };
+app.post('/login', async (req, res) => {
+  const login = req.body.login;
+  const password = req.body.password;
+  let user = axios.get(`http://127.0.0.1:5000/user/verify/` + login + '/' + password)
+    .then(async response => {return await Promise.resolve(response.status)});
+  user = await Promise.resolve(user); //safety net
+  if (user === 200) {
+    user = {user, login};
   }
 
   if (user) {
     const expiresIn = 60 * 60 * 24 * 180; // 180 days
-    const token = jwt.sign(user, config.auth.jwt.secret, { expiresIn });
+    const token = jwt.sign(user, config.auth.jwt.secret, {expiresIn});
     res.cookie('id_token', token, {
       maxAge: 1000 * expiresIn,
       httpOnly: false,
     });
-    res.json({ id_token: token });
+    res.json({id_token: token});
   } else {
-    res.status(401).json({ message: 'To login use user: "user", password: "password".' });
+    res.status(401).json({message: 'To login use user: "user", password: "password".'});
   }
 });
 

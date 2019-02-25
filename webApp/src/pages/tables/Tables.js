@@ -14,7 +14,7 @@ import {
 import Widget from '../../components/Widget';
 import s from './Static.scss';
 import me from '../../data/queries/me';
-import socketIOClient from "socket.io-client";
+import io from "socket.io-client";
 
 class Tables extends Component {
 
@@ -31,22 +31,14 @@ class Tables extends Component {
         { info: {type: '', dimensions: '', }, date: new Date(''), progress: { percent: 0, }, },
         { info: {type: '', dimensions: '', }, date: new Date(''), progress: { percent: 0, }, },
       ],
+      response: "test",
 
       endpoint: {
-        response: false,
         endpoint: "http://127.0.0.1:5000/",
         username: me.type.name,
         headers: {"Content-Type" : "application/json"},
       },
     };
-  }
-
-  componentDidMount() {
-    const { endpoint } = this.state.endpoint;
-    const socket = socketIOClient(endpoint);
-    console.log(socket);
-    socket.on("notification", response => console.log(response));
-    this.getData();
   }
 
   getData(){
@@ -136,6 +128,18 @@ class Tables extends Component {
         }))
   }
 
+  componentDidMount() {
+    this.getData();
+    const socket = io("http://127.0.0.1:5000/");
+    socket.on("notification", (response) => {
+      if (response.update === true) {
+        console.log("updated the table!");
+        this.getData();
+      }
+    });
+  }
+
+
   parseDate(date) {
     this.dateSet = date.toDateString().split(' ');
     return `${date.toLocaleString('en-us', { month: 'long' })} ${this.dateSet[2]}, ${this.dateSet[3]}`;
@@ -143,8 +147,8 @@ class Tables extends Component {
 
   render() {
     return (
-      // <div> {this.state.data} </div>
       <div>
+        <h5> {this.state.response} </h5> <br/>
         <Breadcrumb>
           <BreadcrumbItem>Home</BreadcrumbItem>
           <BreadcrumbItem active>Notifications</BreadcrumbItem>
