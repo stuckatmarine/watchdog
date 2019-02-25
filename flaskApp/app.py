@@ -1,13 +1,14 @@
 from pymongo import MongoClient
-from flask import Flask, request, jsonify, Response
+from flask import Flask, request
 from bson.json_util import dumps
 from flask_cors import CORS
-from flask_socketio import SocketIO
+from flask_socketio import SocketIO, emit
 
 
 app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app)
+
 
 def connect(collection):
     try:
@@ -18,8 +19,9 @@ def connect(collection):
         print('error connecting to mongo!')
     finally:
         client.close()
-    
+
     return client, collection
+
 
 @app.route('/user/notifications/<username>', methods=['GET'])
 def get_user_notifications(username):
@@ -29,11 +31,12 @@ def get_user_notifications(username):
     client.close()
 
     client, collection = connect('notifications')
-    ##TODO: Add ordering
-    notifications = collection.find({"mpu_id": {"$in": mpu_ids}}).limit(5)
+    # TODO: Add ordering
+    notifications = collection.find({"mpu_id": {"$in": mpu_ids}}).sort({"date": 1}).limit(5)
     client.close()
 
     return dumps(notifications)
+
 
 @app.route('/user/prefrences/<username>', methods=['GET'])
 def get_user_info(username):
@@ -50,7 +53,7 @@ def update_user_info(username):
     print(request.get_json())
     """
     collection.update_one({"username": username.lower()},
-                           {"$set": 
+                           {"$set":
                                {"email": request.get_json()["email"],
                                 "first_name": request.get_json()["first_name"],
                                 "last_name": request.get_json()["last_name"],
@@ -72,23 +75,39 @@ def update_user_info(username):
     return "Success!"
 
 
-
 @app.route('/user/verify/<username>/<password>', methods=['GET'])
 def verify_user(username, password):
     client, collection = connect('users')
     user = collection.find_one({"username": username.lower()})
     client.close()
-    
-    if user['password'] == password:
-        return 1
-    
-    return 0
 
-@socketio.on('notification')
-def update_notifications(username):
-    print(username)
-    return get_user_notifications(username)
+    if user['password'] == password:
+        return 'true', 200
+
+    return 'false', 403
+
+
+@app.route('/user/notify/<username>', methods=['POST'])
+def notify_user(username):
+    emit('notification', {'update': True})
+
+
+@socketio.on('connect')
+def socket_connect():
+    print("\n hmm", request.sid, "Connected! \n")
+
+
+@socketio.on('disconnect')
+def socket_disconnect():
+    print("\n hmm", request.sid, "Disconnection! \n")
+
+
+@socketio.on_error_default  # handles all errors
+def default_error_handler(e):
+    print(request.event["message"])  # "my error event"
+    print(request.event["args"])     # (data,)
+
 
 if __name__ == '__main__':
-    #socketio.run(app)
+    # socketio.run(app)
     app.run()
