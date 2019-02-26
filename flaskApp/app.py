@@ -32,7 +32,7 @@ def get_user_notifications(username):
 
     client, collection = connect('notifications')
     # TODO: Add ordering
-    notifications = collection.find({"mpu_id": {"$in": mpu_ids}}).sort({"date": 1}).limit(5)
+    notifications = collection.find({"mpu_id": {"$in": mpu_ids}}).sort("time", 1).limit(5)
     client.close()
 
     return dumps(notifications)
@@ -95,6 +95,7 @@ def notify_user(username):
 @socketio.on('connect')
 def socket_connect():
     print("\n hmm", request.sid, "Connected! \n")
+    emit('notification', {'update': True})
 
 
 @socketio.on('disconnect')
