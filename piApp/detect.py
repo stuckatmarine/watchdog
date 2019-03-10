@@ -1,5 +1,5 @@
 from keras.models import load_model
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 from itertools import product
 import numpy as np
 from yad2k_out import get_model
@@ -174,12 +174,14 @@ def detect_from_image(image):
             yh=y + int(objects[key][0]["h"])
             draw = ImageDraw.Draw(image)
             draw.rectangle(((x, y), (xw, yh)), fill=None, outline=(255,0,0))
-            draw.text((x + 20, y + 20), label)
+            fnt = ImageFont.truetype('Pillow/Tests/fonts/FreeMono.ttf', 40)
+
+            draw.text((x + 20, y + 20), label, font=fnt)
             drawDone = True
         else:
             timestamp = objects[key]
             
     if drawDone == True:        
-        image.save("pics/" + timestamp + ".jpg")         
+        image.save("pics/" + timestamp.replace(" ", "_") + ".jpg")         
 
     return objects
