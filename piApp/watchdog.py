@@ -10,7 +10,7 @@ from dateutil import parser
 import detect
 
 ap = argparse.ArgumentParser()
-ap.add_argument("-n", "--mpuid", type=int, default=12345, help="mpuID number, integer")
+ap.add_argument("-n", "--mpuid", type=int, default=123, help="mpuID number, integer")
 ap.add_argument("-c", "--config", type=str, default="conf_json.json", help="name of config file relative to working dir")
 ap.add_argument("-i", "--interval", type=float, default=1, help="interval in minutes to take photographs for object detection")
 ap.add_argument("-s", "--start", type=str, default=None, help="time to begin tracking (e.g. '10:00 AM')")
@@ -23,6 +23,7 @@ args = vars(ap.parse_args())
 
 TEMP_FILE_NAME = "temp.jpg"
 TIME_FORMAT = "%Y.%m.%d_%H.%M.%S"
+TIME_FORMATP = "%Y-%m-%d_%H:%M:%S"
 PIC_DIRECTORY = "pics/"
 
 def setup_camera(vflip, hflip):
@@ -30,23 +31,47 @@ def setup_camera(vflip, hflip):
     camera.vflip = args["vflip"]
     camera.hflip = args["hflip"]
     return camera
+
+def sendImage(imgName):
+    openFile = open(imgName, 'rb')
+    headers = {"metadata":[imgName]}
+    with open(imgName, 'rb') as img:
+        files = {"image": (imgName,img,'imgNameConfirmation',{'Expires': '0'})}
+        openFile.close()
+    url = "https://example.com/user/trigger/" + str(args["mpuid"])
     
-def track(camera, interval, start_time, end_time, directory):
+    print ("sending " + imgName + " notification")
+    #response = requests.post(url, data=files.read(), headers=headers, verify=False)
+    with requests.Session() as s:
+        r = s.post(url,files=files)
+    print(r.status_code)
+        
+def track(camera, interval, start_time, end_time, directory, confJson):
     next_picture_time = dt.datetime.now() + dt.timedelta(minutes=interval)
-    pic_name = '{}/{}.jpg'.format(PIC_DIRECTORY, dt.datetime.now().strftime(TIME_FORMAT))
+    pic_name = '{}/{}.jpg'.format(PIC_DIRECTORY, dt.datetime.now().strftime(TIME_FORMATP)[-8:])
     camera.capture(TEMP_FILE_NAME)
     objects = detect.detect_from_image(TEMP_FILE_NAME)
     file_name = '{}/{}.json'.format(directory, dt.datetime.now().strftime(TIME_FORMAT))
 
     with open(file_name, 'w') as fp:
         json.dump(objects, fp)
+        fp.close()
+        
+    # if pic match filters
+    sendB = False
+    for cls in confJson["classNames"]:
+        if cls in objects:
+            sendB = True
+            break
+    if sendB == True:
+        sendImage('{}{}.jpg'.format(PIC_DIRECTORY, dt.datetime.now().strftime(TIME_FORMATP)))
 
-    print("Next picture will be taken at {}".format(next_picture_time.strftime(TIME_FORMAT)))
-    
+    print("Next picture will be taken at {}".format(next_picture_time.strftime(TIME_FORMAT)))    
     seconds_to_sleep = (next_picture_time - dt.datetime.now()).total_seconds()
     seconds_to_sleep = max(0, seconds_to_sleep)
     return seconds_to_sleep
 
+# needed for parsing json in python 2.7, removes 'u' char
 def byteify(input):
     if isinstance(input, dict):
         return {byteify(key): byteify(value)
@@ -57,22 +82,25 @@ def byteify(input):
         return input.encode('utf-8')
     else:
         return input
+
         
 if __name__ == "__main__":
-	
+    
+    # get up to date config file from server, else use local one
     print("get configuration info from server")
-    r = requests.get("https://example.com/user/preferences/:" + str(args["mpuid"]))
+    r = requests.get("https://example.com/mpu/preferences/" + str(args["mpuid"]))
     if r.status_code == 200:
         confJson = json.load(r.json())
     else:
         print("config from server no good, using local file")
         confJson = byteify(json.load(open(args["config"])))	
         print(confJson['startTime'])
-	
+
+    # create camera instance
     print("warming up camera")
     camera = setup_camera(confJson["vFlip"], confJson["hFlip"])
-	
-	
+
+    # confirm operational times for WatchDog to operate
     if confJson["startTime"] == "None":
         start_time = dt.datetime.now()
     else:
@@ -86,20 +114,24 @@ if __name__ == "__main__":
             end_time + dt.timedelta(days=1)
     print("StartTime {} -> EndTime {}", start_time, end_time)
     
+    # build yolo model from weights, only done once per fun
     print("Building model ~1.5mins")
     detect.load_yolo_model()
     
+    # sleep if outside operational time window
     print("Starting watchdog...")
     if start_time > dt.datetime.now():
         sleep_seconds = (start_time - dt.datetime.now()).seconds
         print("Sleep until : ", start_time.strftime(TIME_FORMAT))
         time.sleep(sleep_seconds)
 
+    # if operational, print how long WatchDog will run from now in sec's
     if end_time is not None:
         print("Running until {}".format(end_time.strftime(TIME_FORMAT)))
     else:
         end_time = dt.datetime.max
-       
+    
+    # take snapshot and track objects based on confJson
     while dt.datetime.now() < end_time:
-        sleepTime = track(camera=camera, interval=confJson["interval"], start_time=start_time, end_time=end_time, directory=args["dir"])
+        sleepTime = track(camera=camera, interval=confJson["interval"], start_time=start_time, end_time=end_time, directory=args["dir"], confJson=confJson)
         time.sleep(sleepTime)

@@ -1,10 +1,10 @@
 {
-	"mpuid" : 12345,
+	"mpuid" : 123,
 	"interval" : 0.5,
 	"startTime" : "None",
 	"endTime" : "None",
 	"vFlip" : false,
 	"hFlip" : true,
-	"classIdxs" : [0,16],
-	"classNames" : ["person","dog"]
+	"classIdxs" : [39],
+	"classNames" : ["bottle"]
 }
