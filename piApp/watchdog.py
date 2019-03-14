@@ -5,6 +5,7 @@ import time
 import picamera
 import json
 import yaml
+import base64
 from dateutil import parser
 
 import detect
@@ -21,6 +22,7 @@ ap.add_argument("--hflip", action="store_true", help="flip images taken from cam
 
 args = vars(ap.parse_args())
 
+dotCom = "http://192.168.137.135:5000"
 TEMP_FILE_NAME = "temp.jpg"
 TIME_FORMAT = "%Y.%m.%d_%H.%M.%S"
 TIME_FORMATP = "%Y-%m-%d_%H:%M:%S"
@@ -28,8 +30,8 @@ PIC_DIRECTORY = "pics/"
 
 def setup_camera(vflip, hflip):
     camera = picamera.PiCamera()
-    camera.vflip = args["vflip"]
-    camera.hflip = args["hflip"]
+    camera.vflip = vflip
+    camera.hflip = hflip
     return camera
 
 def sendImage(imgName):
@@ -37,21 +39,24 @@ def sendImage(imgName):
     headers = {"metadata":[imgName]}
     with open(imgName, 'rb') as img:
         files = {"image": (imgName,img,'imgNameConfirmation',{'Expires': '0'})}
-        openFile.close()
-    url = "https://example.com/user/trigger/" + str(args["mpuid"])
-    
-    print ("sending " + imgName + " notification")
-    #response = requests.post(url, data=files.read(), headers=headers, verify=False)
-    with requests.Session() as s:
-        r = s.post(url,files=files)
-    print(r.status_code)
+        url = dotCom + "/mpu/trigger/" + str(args["mpuid"])
+        print ("sending " + imgName + " notification")
+        imgStr = base64.b64encode(img.read())
+        print ("imgStr" + imgStr[:10])
+        response = requests.post(url, data=imgStr)
+        '''with requests.Session() as s:
+            r = s.post(url,files=files)
+        '''
+        print(response.status_code)
         
 def track(camera, interval, start_time, end_time, directory, confJson):
-    next_picture_time = dt.datetime.now() + dt.timedelta(minutes=interval)
-    pic_name = '{}/{}.jpg'.format(PIC_DIRECTORY, dt.datetime.now().strftime(TIME_FORMATP)[-8:])
+    print(interval)
+    next_picture_time = dt.datetime.now() + dt.timedelta(minutes=float(interval))
+    dtn = dt.datetime.now()
+    pic_name = '{}/{}.jpg'.format(PIC_DIRECTORY, dtn.strftime(TIME_FORMATP))
     camera.capture(TEMP_FILE_NAME)
-    objects = detect.detect_from_image(TEMP_FILE_NAME)
-    file_name = '{}/{}.json'.format(directory, dt.datetime.now().strftime(TIME_FORMAT))
+    objects = detect.detect_from_image(TEMP_FILE_NAME, pic_name)
+    file_name = '{}/{}.json'.format(directory, dtn.strftime(TIME_FORMAT))
 
     with open(file_name, 'w') as fp:
         json.dump(objects, fp)
@@ -64,10 +69,10 @@ def track(camera, interval, start_time, end_time, directory, confJson):
             sendB = True
             break
     if sendB == True:
-        sendImage('{}{}.jpg'.format(PIC_DIRECTORY, dt.datetime.now().strftime(TIME_FORMATP)))
+        sendImage('{}{}.jpg'.format(PIC_DIRECTORY, dtn.strftime(TIME_FORMATP)))
 
     print("Next picture will be taken at {}".format(next_picture_time.strftime(TIME_FORMAT)))    
-    seconds_to_sleep = (next_picture_time - dt.datetime.now()).total_seconds()
+    seconds_to_sleep = (next_picture_time - dtn).total_seconds()
     seconds_to_sleep = max(0, seconds_to_sleep)
     return seconds_to_sleep
 
@@ -88,13 +93,21 @@ if __name__ == "__main__":
     
     # get up to date config file from server, else use local one
     print("get configuration info from server")
-    r = requests.get("https://example.com/mpu/preferences/" + str(args["mpuid"]))
+    r = requests.get(dotCom + "/mpu/prefrences/" + str(args["mpuid"]))
     if r.status_code == 200:
-        confJson = json.load(r.json())
+        
+        confJson = r.json()
     else:
+        print(r.status_code)
+        print(r.text)
         print("config from server no good, using local file")
         confJson = byteify(json.load(open(args["config"])))	
         print(confJson['startTime'])
+    
+    #confJson = byteify(json.load(open(args["config"])))	
+    
+    print("sending test image")
+    sendImage("temp.jpg")
 
     # create camera instance
     print("warming up camera")
