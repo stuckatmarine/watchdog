@@ -13,6 +13,7 @@ def load_yolo_model():
     global model
     print("Loading model")
     model = get_model(configs.CONFIG_PATH, configs.WEIGHTS_PATH)
+    #model = get_model(configs.TCONFIG_PATH, configs.TWEIGHTS_PATH)
 
 def get_classes(classes_path):
     """ Loads classes from text file 
@@ -141,7 +142,7 @@ def find_centers(im_xy, im_wh, im_confidence, im_class_probs, class_names, min_c
                 objects[class_name] = objects.get(class_name, []) + [{"confidence" : str(int(confidence * 100)), "coors": coors, "center": center, "x": x, "y": y, "w": w, "h": h, "xywh":xywh }]
     return objects
 
-def detect_from_image(image):
+def detect_from_image(image, pic_name):
 
     if type(image) is str:
         image = Image.open(image)
@@ -182,6 +183,6 @@ def detect_from_image(image):
             timestamp = objects[key]
             
     if drawDone == True:        
-        image.save("pics/" + timestamp.replace(" ", "_") + ".jpg")         
+        image.save(pic_name)         
 
     return objects
