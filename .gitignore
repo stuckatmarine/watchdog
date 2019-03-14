@@ -9,6 +9,9 @@ __pycache__/
 # Distribution / packaging
 .Python
 build/
+webApp/node_modules/
+webApp/yarn.lock
+webApp/package-lock.json
 develop-eggs/
 dist/
 downloads/
