@@ -1,9 +1,11 @@
+from base64 import decodebytes
 from pymongo import MongoClient
-from flask import Flask, request
+from flask import Flask, request, render_template
 from bson.json_util import dumps
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit
-
+import time
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -23,6 +25,31 @@ def connect(collection):
     return client, collection
 
 
+@app.route('/mpu/prefrences/<mpu_id>', methods=['GET'])
+def get_mpu_config(mpu_id):
+    client, collection = connect('users')
+    user = collection.find_one({"mpu_id": int(mpu_id)})
+    client.close()
+    return dumps(user['mpuid'])
+
+
+@app.route('/mpu/trigger/<mpu_id>', methods=['POST'])
+def mpu_notification(mpu_id):
+    timehex = hex(int(time.time()))
+    f = open(timehex + ".jpg", "wb")
+    f.write(decodebytes(request.data))
+    f.close()
+    notify_user("user")
+    return "Success!", 200
+
+
+"""
+@app.route('/user/render_image', methods=['GET'])
+def show_index():
+    full_filename = os.path.join(app.config['UPLOAD_FOLDER'], 'shovon.jpg')
+    return render_template("index.html", user_image = full_filename)
+"""
+
 @app.route('/user/notifications/<username>', methods=['GET'])
 def get_user_notifications(username):
     client, collection = connect('users')
@@ -31,7 +58,6 @@ def get_user_notifications(username):
     client.close()
 
     client, collection = connect('notifications')
-    # TODO: Add ordering
     notifications = collection.find({"mpu_id": {"$in": mpu_ids}}).sort("time", 1).limit(5)
     client.close()
 
@@ -111,4 +137,5 @@ def default_error_handler(e):
 
 if __name__ == '__main__':
     # socketio.run(app)
-    app.run()
+    #app.run(host='192.168.137.135', port=5000)
+    app.run(host='127.0.0.1', port=5000)
