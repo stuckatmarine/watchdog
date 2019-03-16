@@ -42,7 +42,7 @@ class Tables extends Component {
   }
 
   getData(){
-    axios.get(`http://127.0.0.1:5000/user/notifications/${me.type.name}`)
+    axios.get(`http://192.168.137.135:5000/user/notifications/${me.type.name}`)
       .then(response =>
         this.setState({
           tableStyles: [{

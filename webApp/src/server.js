@@ -84,7 +84,7 @@ if (__DEV__) {
 app.post('/login', async (req, res) => {
   const login = req.body.login;
   const password = crypto.createHash('sha256').update(req.body.password).digest('hex')
-  let user = axios.get(`http://127.0.0.1:5000/user/verify/` + login + '/' + password)
+  let user = axios.get(`http://192.168.137.135:5000/user/verify/` + login + '/' + password)
     .then(async response => {return await Promise.resolve(response.status)});
   user = await Promise.resolve(user); //safety net
   if (user === 200) {

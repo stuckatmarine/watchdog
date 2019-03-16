@@ -1,6 +1,6 @@
 from base64 import decodebytes
 from pymongo import MongoClient
-from flask import Flask, request, render_template
+from flask import Flask, request #, render_template
 from bson.json_util import dumps
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit
@@ -39,7 +39,7 @@ def mpu_notification(mpu_id):
     f = open(timehex + ".jpg", "wb")
     f.write(decodebytes(request.data))
     f.close()
-    notify_user("user")
+    #notify_user("user")
     return "Success!", 200
 
 
@@ -137,5 +137,5 @@ def default_error_handler(e):
 
 if __name__ == '__main__':
     # socketio.run(app)
-    #app.run(host='192.168.137.135', port=5000)
-    app.run(host='127.0.0.1', port=5000)
+    app.run(host='192.168.137.135', port=5000)
+    #app.run(host='127.0.0.1', port=5000)

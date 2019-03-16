@@ -55,7 +55,7 @@ class Profile extends PureComponent {
   }
 
   getData(){
-    axios.get(`http://127.0.0.1:5000/user/prefrences/${  me.type.name}`)
+    axios.get(`http://192.168.137.135:5000/user/prefrences/${  me.type.name}`)
       .then(response =>
         this.setState({
           email: response.data.email,
