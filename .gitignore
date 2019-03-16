@@ -29,6 +29,8 @@ wheels/
 MANIFEST
 model/yolov2-tiny.weights
 model/yolov2.weights
+flaskApp/*.jpg
+.idea/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
