@@ -5,3 +5,7 @@ WEIGHTS_PATH = "model/yolov2.weights"
 MODEL_IMAGE_SIZE = (608, 608)
 MIN_CONFIDENCE = 0.5
 MAX_OVERLAP = 0.35
+TANCHORS_PATH = "model/tiny-yolo-voc.anchors"
+TCLASSES_PATH = "model/tiny-yolo-voc.classes"
+TCONFIG_PATH = "model/tiny-yolo-voc.cfg"
+TWEIGHTS_PATH = "model/yolov2-tiny.weights" 
