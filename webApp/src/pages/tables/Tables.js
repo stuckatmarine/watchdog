@@ -15,6 +15,7 @@ import Widget from '../../components/Widget';
 import s from './Static.scss';
 import me from '../../data/queries/me';
 import io from "socket.io-client";
+const addr = 'http://127.0.0.1:5000';
 
 class Tables extends Component {
 
@@ -34,7 +35,7 @@ class Tables extends Component {
       response: "test",
 
       endpoint: {
-        endpoint: "http://192.168.137.135:5000/",
+        endpoint: addr,
         username: me.type.name,
         headers: {"Content-Type" : "application/json"},
       },
@@ -42,7 +43,7 @@ class Tables extends Component {
   }
 
   getData(){
-    axios.get(`http://127.0.0.1:5000/user/notifications/${me.type.name}`)
+    axios.get(addr + '/user/notifications/' + me.type.name)
       .then(response =>
         this.setState({
           tableStyles: [{
@@ -130,7 +131,7 @@ class Tables extends Component {
 
   componentDidMount() {
     this.getData();
-    const socket = io("http://127.0.0.1:5000/");
+    const socket = io(addr);
     socket.on("notification", (response) => {
       if (response.update === true) {
         console.log("updated the table!");

@@ -17,6 +17,7 @@ import {
 import Widget from '../../components/Widget';
 import me from '../../data/queries/me';
 import s from './Profile.scss';
+const addr = 'http://127.0.0.1:5000';
 
 class Profile extends PureComponent {
   constructor(props){
@@ -55,7 +56,7 @@ class Profile extends PureComponent {
   }
 
   getData(){
-    axios.get(`http://192.168.137.135:5000/user/prefrences/${  me.type.name}`)
+    axios.get(addr + '/user/prefrences/' +  me.type.name)
       .then(response =>
         this.setState({
           email: response.data.email,
@@ -147,7 +148,7 @@ class Profile extends PureComponent {
     e.preventDefault();
     axios({
       method: 'post',
-      url: `http://127.0.0.1:5000/user/prefrences/${  me.type.name}`,
+      url: addr + '/user/prefrences/' + me.type.name,
       data: {
         email: this.state.email,
         first_name: this.state.first_name,
