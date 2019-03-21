@@ -1,15 +1,19 @@
 from base64 import decodebytes
 from pymongo import MongoClient
-from flask import Flask, request #, render_template
+from flask import Flask, request  # , render_template
 from bson.json_util import dumps
 from flask_cors import CORS
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO, send, emit
 import time
 import os
+import threading
+
 
 app = Flask(__name__)
 CORS(app)
-socketio = SocketIO(app)
+socketio = SocketIO(app, ping_timeout=360000)
+
+client = []
 
 
 def connect(collection):
@@ -17,8 +21,9 @@ def connect(collection):
         client = MongoClient('mongodb://admin:admin@cluster0-shard-00-00-xlfzz.gcp.mongodb.net:27017,cluster0-shard-00-01-xlfzz.gcp.mongodb.net:27017,cluster0-shard-00-02-xlfzz.gcp.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin')
         db = client['watchdog']
         collection = db[collection]
-    except:
+    except Exception as e:
         print('error connecting to mongo!')
+        raise e
     finally:
         client.close()
 
@@ -36,10 +41,10 @@ def get_mpu_config(mpu_id):
 @app.route('/mpu/trigger/<mpu_id>', methods=['POST'])
 def mpu_notification(mpu_id):
     timehex = hex(int(time.time()))
-    f = open(timehex + ".jpg", "wb")
+    f = open('localStorage/' + timehex + ".jpg", "wb")
     f.write(decodebytes(request.data))
     f.close()
-    #notify_user("user")
+
     return "Success!", 200
 
 
@@ -49,6 +54,7 @@ def show_index():
     full_filename = os.path.join(app.config['UPLOAD_FOLDER'], 'shovon.jpg')
     return render_template("index.html", user_image = full_filename)
 """
+
 
 @app.route('/user/notifications/<username>', methods=['GET'])
 def get_user_notifications(username):
@@ -113,20 +119,30 @@ def verify_user(username, password):
     return 'false', 403
 
 
-@app.route('/user/notify/<username>', methods=['POST'])
-def notify_user(username):
-    emit('notification', {'update': True})
+@app.route('/test', methods=['GET'])
+def test():
+    socketio.emit('notification', {'update': True}, broadcast=True)
+    return "Success!"
+
+
+"""
+@socketio.on('trigger')
+def socket_trigger():
+    socketio.emit('notification', {'update': True}, broadcast=True)
+    print(request.sid, "Connected! \n")
+"""
 
 
 @socketio.on('connect')
 def socket_connect():
-    print("\n hmm", request.sid, "Connected! \n")
-    emit('notification', {'update': True})
+    # test()
+    print(request.sid, "Connected! \n")
 
 
 @socketio.on('disconnect')
 def socket_disconnect():
-    print("\n hmm", request.sid, "Disconnection! \n")
+    print(request.sid, "Disconnection! \n")
+
 
 
 @socketio.on_error_default  # handles all errors
@@ -136,6 +152,9 @@ def default_error_handler(e):
 
 
 if __name__ == '__main__':
-    # socketio.run(app)
-    app.run(host='192.168.137.135', port=5000)
-    #app.run(host='127.0.0.1', port=5000)
+    sock_thread = threading.Thread(socketio.run(app))
+    sock_thread.start()
+
+    # host='192.168.137.135'
+    flask_thread = threading.Thread(app.run(host='127.0.0.1', port=5000))
+    flask_thread.start()

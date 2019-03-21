@@ -131,8 +131,14 @@ class Tables extends Component {
 
   componentDidMount() {
     this.getData();
-    const socket = io(addr);
+    const socket = io.connect(addr);
+
+    socket.on('connect', function () {
+      console.log("connected!");
+    });
+
     socket.on("notification", (response) => {
+      console.log("hello????????");
       if (response.update === true) {
         console.log("updated the table!");
         this.getData();
