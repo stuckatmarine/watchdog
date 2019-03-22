@@ -1,9 +1,9 @@
 from base64 import decodebytes
 from pymongo import MongoClient
-from flask import Flask, request  # , render_template
+from flask import Flask, request, render_template, send_file
 from bson.json_util import dumps
 from flask_cors import CORS
-from flask_socketio import SocketIO, send, emit
+from flask_socketio import SocketIO
 import time
 import os
 import threading
@@ -12,8 +12,6 @@ import threading
 app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app, ping_timeout=360000)
-
-client = []
 
 
 def connect(collection):
@@ -45,15 +43,23 @@ def mpu_notification(mpu_id):
     f.write(decodebytes(request.data))
     f.close()
 
+    client, collection = connect('notifications')
+    notification = {'mpu_id': int(mpu_id),
+                    'description': request.get_json()["description"],
+                    'time': time.time(),
+                    'photo': timehex}
+    collection.insert_one(notification)
+    client.close()
+
+    socketio.emit('notification', {'update': True}, broadcast=True)
+
     return "Success!", 200
 
 
-"""
-@app.route('/user/render_image', methods=['GET'])
-def show_index():
-    full_filename = os.path.join(app.config['UPLOAD_FOLDER'], 'shovon.jpg')
-    return render_template("index.html", user_image = full_filename)
-"""
+@app.route('/user/render_image/<photo>', methods=['GET'])
+def show_index(photo):
+    full_filename = os.path.join('localStorage', photo + '.jpg')
+    return send_file(full_filename)
 
 
 @app.route('/user/notifications/<username>', methods=['GET'])
@@ -125,24 +131,14 @@ def test():
     return "Success!"
 
 
-"""
-@socketio.on('trigger')
-def socket_trigger():
-    socketio.emit('notification', {'update': True}, broadcast=True)
-    print(request.sid, "Connected! \n")
-"""
-
-
 @socketio.on('connect')
 def socket_connect():
-    # test()
     print(request.sid, "Connected! \n")
 
 
 @socketio.on('disconnect')
 def socket_disconnect():
     print(request.sid, "Disconnection! \n")
-
 
 
 @socketio.on_error_default  # handles all errors

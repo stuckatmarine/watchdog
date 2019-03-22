@@ -32,13 +32,6 @@ class Tables extends Component {
         { info: {type: '', dimensions: '', }, date: new Date(''), progress: { percent: 0, }, },
         { info: {type: '', dimensions: '', }, date: new Date(''), progress: { percent: 0, }, },
       ],
-      response: "test",
-
-      endpoint: {
-        endpoint: addr,
-        username: me.type.name,
-        headers: {"Content-Type" : "application/json"},
-      },
     };
   }
 
@@ -48,7 +41,7 @@ class Tables extends Component {
         this.setState({
           tableStyles: [{
             id: 1,
-            picture: response.data["0"].photo,
+            picture: addr + '/user/render_image/' + response.data["0"].photo,
             description: response.data["0"].description,
             info: {
               type: 'JPEG',
@@ -63,7 +56,7 @@ class Tables extends Component {
           },
             {
               id: 2,
-              picture: response.data["1"].photo,
+              picture: addr + '/user/render_image/' + response.data["1"].photo,
               description: response.data["1"].description,
               info: {
                 type: 'PSD',
@@ -78,7 +71,7 @@ class Tables extends Component {
             },
             {
               id: 3,
-              picture: response.data["2"].photo,
+              picture: addr + '/user/render_image/' + response.data["2"].photo,
               description: response.data["2"].description,
               label: {
                 colorClass: 'success',
@@ -97,7 +90,7 @@ class Tables extends Component {
             },
             {
               id: 4,
-              picture: response.data["3"].photo,
+              picture: addr + '/user/render_image/' + response.data["3"].photo,
               description: response.data["3"].description,
               info: {
                 type: 'PNG',
@@ -112,7 +105,7 @@ class Tables extends Component {
             },
             {
               id: 5,
-              picture: response.data["4"].photo,
+              picture: addr + '/user/render_image/' + response.data["4"].photo,
               description: response.data["4"].description,
               info: {
                 type: 'JPEG',
@@ -134,11 +127,10 @@ class Tables extends Component {
     const socket = io.connect(addr);
 
     socket.on('connect', function () {
-      console.log("connected!");
+      console.log("connected to flask socket!");
     });
 
     socket.on("notification", (response) => {
-      console.log("hello????????");
       if (response.update === true) {
         console.log("updated the table!");
         this.getData();
