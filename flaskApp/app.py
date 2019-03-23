@@ -1,5 +1,5 @@
 from base64 import decodebytes
-from pymongo import MongoClient
+import pymongo
 from flask import Flask, request, render_template, send_file
 from bson.json_util import dumps
 from flask_cors import CORS
@@ -7,6 +7,7 @@ from flask_socketio import SocketIO
 import time
 import os
 import threading
+import datetime
 
 
 app = Flask(__name__)
@@ -16,7 +17,7 @@ socketio = SocketIO(app, ping_timeout=360000)
 
 def connect(collection):
     try:
-        client = MongoClient('mongodb://admin:admin@cluster0-shard-00-00-xlfzz.gcp.mongodb.net:27017,cluster0-shard-00-01-xlfzz.gcp.mongodb.net:27017,cluster0-shard-00-02-xlfzz.gcp.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin')
+        client = pymongo.MongoClient('mongodb://admin:admin@cluster0-shard-00-00-xlfzz.gcp.mongodb.net:27017,cluster0-shard-00-01-xlfzz.gcp.mongodb.net:27017,cluster0-shard-00-02-xlfzz.gcp.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin')
         db = client['watchdog']
         collection = db[collection]
     except Exception as e:
@@ -42,11 +43,12 @@ def mpu_notification(mpu_id):
     f = open('localStorage/' + timehex + ".jpg", "wb")
     f.write(decodebytes(request.data))
     f.close()
-
+    
+    print(request.headers["Metadata"])
     client, collection = connect('notifications')
     notification = {'mpu_id': int(mpu_id),
-                    'description': request.get_json()["description"],
-                    'time': time.time(),
+                    'description': "test", # request.get_json()["metadata"],
+                    'time': datetime.datetime.now(),
                     'photo': timehex}
     collection.insert_one(notification)
     client.close()
@@ -70,7 +72,7 @@ def get_user_notifications(username):
     client.close()
 
     client, collection = connect('notifications')
-    notifications = collection.find({"mpu_id": {"$in": mpu_ids}}).sort("time", 1).limit(5)
+    notifications = collection.find({"mpu_id": {"$in": mpu_ids}}).sort("time", -1).limit(5)
     client.close()
 
     return dumps(notifications)
@@ -148,9 +150,9 @@ def default_error_handler(e):
 
 
 if __name__ == '__main__':
-    sock_thread = threading.Thread(socketio.run(app))
+    sock_thread = threading.Thread(socketio.run(app, host='127.0.0.1', port=5000))
     sock_thread.start()
-
+    
     # host='192.168.137.135'
     flask_thread = threading.Thread(app.run(host='127.0.0.1', port=5000))
     flask_thread.start()

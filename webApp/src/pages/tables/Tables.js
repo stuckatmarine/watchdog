@@ -47,7 +47,7 @@ class Tables extends Component {
               type: 'JPEG',
               dimensions: '200x150',
             },
-            date: new Date('September 14, 2012'),
+            date: new Date([response.data["0"].time]),
             unit: response.data["0"].mpu_id,
             progress: {
               percent: 29,
@@ -62,7 +62,7 @@ class Tables extends Component {
                 type: 'PSD',
                 dimensions: '2400x1455',
               },
-              date: new Date('November 14, 2012'),
+              date: new Date([response.data["1"].time]),
               unit: response.data["1"].mpu_id,
               progress: {
                 percent: 33,
@@ -81,7 +81,7 @@ class Tables extends Component {
                 type: 'JPEG',
                 dimensions: '200x150',
               },
-              date: new Date('September 14, 2012'),
+              date: new Date([response.data["2"].time]),
               unit: response.data["2"].mpu_id,
               progress: {
                 percent: 38,
@@ -96,7 +96,7 @@ class Tables extends Component {
                 type: 'PNG',
                 dimensions: '210x160',
               },
-              date: new Date('September 15, 2012'),
+              date: new Date([response.data["0"].time]),
               unit: response.data["3"].mpu_id,
               progress: {
                 percent: 17,
@@ -111,7 +111,7 @@ class Tables extends Component {
                 type: 'JPEG',
                 dimensions: '1452x1320',
               },
-              date: new Date('October 1, 2012'),
+              date: new Date([response.data["4"].time]),
               unit: response.data["4"].mpu_id,
               progress: {
                 percent: 41,
