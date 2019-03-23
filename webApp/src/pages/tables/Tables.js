@@ -5,8 +5,6 @@ import {
   Row,
   Col,
   Table,
-  Progress,
-  Badge,
   Breadcrumb,
   BreadcrumbItem,
 } from 'reactstrap';
@@ -26,11 +24,11 @@ class Tables extends Component {
       data: [''],
 
       tableStyles: [
-        { info: {type: '', dimensions: '', }, date: new Date(''), progress: { percent: 0, }, },
-        { info: {type: '', dimensions: '', }, date: new Date(''), progress: { percent: 0, }, },
-        { info: {type: '', dimensions: '', }, date: new Date(''), progress: { percent: 0, }, },
-        { info: {type: '', dimensions: '', }, date: new Date(''), progress: { percent: 0, }, },
-        { info: {type: '', dimensions: '', }, date: new Date(''), progress: { percent: 0, }, },
+        { date: new Date(''), },
+        { date: new Date(''), },
+        { date: new Date(''), },
+        { date: new Date(''), },
+        { date: new Date(''), },
       ],
     };
   }
@@ -43,80 +41,36 @@ class Tables extends Component {
             id: 1,
             picture: addr + '/user/render_image/' + response.data["0"].photo,
             description: response.data["0"].description,
-            info: {
-              type: 'JPEG',
-              dimensions: '200x150',
-            },
-            date: new Date([response.data["0"].time]),
+            date: new Date(response.data["0"].time["$date"]),
             unit: response.data["0"].mpu_id,
-            progress: {
-              percent: 29,
-              colorClass: 'success',
-            },
           },
             {
               id: 2,
               picture: addr + '/user/render_image/' + response.data["1"].photo,
               description: response.data["1"].description,
-              info: {
-                type: 'PSD',
-                dimensions: '2400x1455',
-              },
-              date: new Date([response.data["1"].time]),
+              date: new Date(response.data["1"].time["$date"]),
               unit: response.data["1"].mpu_id,
-              progress: {
-                percent: 33,
-                colorClass: 'warning',
-              },
             },
             {
               id: 3,
               picture: addr + '/user/render_image/' + response.data["2"].photo,
               description: response.data["2"].description,
-              label: {
-                colorClass: 'success',
-                text: 'INFO!',
-              },
-              info: {
-                type: 'JPEG',
-                dimensions: '200x150',
-              },
-              date: new Date([response.data["2"].time]),
+              date: new Date(response.data["2"].time["$date"]),
               unit: response.data["2"].mpu_id,
-              progress: {
-                percent: 38,
-                colorClass: 'inverse',
-              },
             },
             {
               id: 4,
               picture: addr + '/user/render_image/' + response.data["3"].photo,
               description: response.data["3"].description,
-              info: {
-                type: 'PNG',
-                dimensions: '210x160',
-              },
-              date: new Date([response.data["0"].time]),
+              date: new Date(response.data["0"].time["$date"]),
               unit: response.data["3"].mpu_id,
-              progress: {
-                percent: 17,
-                colorClass: 'danger',
-              },
             },
             {
               id: 5,
               picture: addr + '/user/render_image/' + response.data["4"].photo,
               description: response.data["4"].description,
-              info: {
-                type: 'JPEG',
-                dimensions: '1452x1320',
-              },
-              date: new Date([response.data["4"].time]),
+              date: new Date(response.data["4"].time["$date"]),
               unit: response.data["4"].mpu_id,
-              progress: {
-                percent: 41,
-                colorClass: 'primary',
-              },
             },
           ]
         }))
@@ -166,10 +120,8 @@ class Tables extends Component {
                   <th className="hidden-sm-down">#</th>
                   <th>Picture</th>
                   <th>Description</th>
-                  <th className="hidden-sm-down">Info</th>
                   <th className="hidden-sm-down">Date</th>
                   <th className="hidden-sm-down">unit</th>
-                  <th />
                 </tr>
                 </thead>
                 <tbody>
@@ -178,42 +130,18 @@ class Tables extends Component {
                     <tr key={row.id}>
                       <td>{row.id}</td>
                       <td>
-                        <img className="img-rounded" src={row.picture} alt="" height="60" />
+                        <thumbnail>
+                          <img className="img-rounded" src={row.picture} alt="" width="400" />
+                        </thumbnail>
                       </td>
                       <td>
                         {row.description}
-                        {row.label &&
-                        <div>
-                          <Badge color={row.label.colorClass}>{row.label.text}</Badge>
-                        </div>
-                        }
-                      </td>
-                      <td>
-                        <p className="mb-0">
-                          <small>
-                            <span className="fw-semi-bold">Type:</span>
-                            <span className="text-muted">&nbsp; {row.info.type}</span>
-                          </small>
-                        </p>
-                        <p>
-                          <small>
-                            <span className="fw-semi-bold">Dimensions:</span>
-                            <span className="text-muted">&nbsp; {row.info.dimensions}</span>
-                          </small>
-                        </p>
                       </td>
                       <td className="text-semi-muted">
                         {this.parseDate(row.date)}
                       </td>
                       <td className="text-semi-muted">
                         {row.unit}
-                      </td>
-                      <td className="width-150">
-                        <Progress
-                          style={{height: '7px'}}
-                          color="success" value={row.progress.percent}
-                          className="progress-sm mb-xs rounded mt-xs"
-                        />
                       </td>
                     </tr>,
                   )
