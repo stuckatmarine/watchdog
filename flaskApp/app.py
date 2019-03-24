@@ -43,11 +43,11 @@ def mpu_notification(mpu_id):
     f = open('localStorage/' + timehex + ".jpg", "wb")
     f.write(decodebytes(request.data))
     f.close()
-    
+
     print(request.headers["Metadata"])
     client, collection = connect('notifications')
     notification = {'mpu_id': int(mpu_id),
-                    'description': "test", # request.get_json()["metadata"],
+                    'description': "test",  # request.headers["Metadata"],
                     'time': datetime.datetime.now(),
                     'photo': timehex}
     collection.insert_one(notification)
@@ -60,8 +60,7 @@ def mpu_notification(mpu_id):
 
 @app.route('/user/render_image/<photo>', methods=['GET'])
 def show_index(photo):
-    full_filename = os.path.join('localStorage', photo + '.jpg')
-    return send_file(full_filename)
+    return send_file(os.path.join('localStorage', photo + '.jpg'))
 
 
 @app.route('/user/notifications/<username>', methods=['GET'])
@@ -152,7 +151,7 @@ def default_error_handler(e):
 if __name__ == '__main__':
     sock_thread = threading.Thread(socketio.run(app, host='127.0.0.1', port=5000))
     sock_thread.start()
-    
+
     # host='192.168.137.135'
     flask_thread = threading.Thread(app.run(host='127.0.0.1', port=5000))
     flask_thread.start()
