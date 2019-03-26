@@ -131,7 +131,7 @@ class Tables extends Component {
                       <td>{row.id}</td>
                       <td>
                         <thumbnail>
-                          <img className="img-rounded" src={row.picture} alt="" width="400" />
+                          <img className="img-rounded" src={row.picture} alt="" width="200" />
                         </thumbnail>
                       </td>
                       <td>

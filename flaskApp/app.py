@@ -1,6 +1,6 @@
+from tools import connect, parse_results, send_text, send_email
 from base64 import decodebytes
-import pymongo
-from flask import Flask, request, render_template, send_file
+from flask import Flask, request, send_file
 from bson.json_util import dumps
 from flask_cors import CORS
 from flask_socketio import SocketIO
@@ -9,24 +9,9 @@ import os
 import threading
 import datetime
 
-
 app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app, ping_timeout=360000)
-
-
-def connect(collection):
-    try:
-        client = pymongo.MongoClient('mongodb://admin:admin@cluster0-shard-00-00-xlfzz.gcp.mongodb.net:27017,cluster0-shard-00-01-xlfzz.gcp.mongodb.net:27017,cluster0-shard-00-02-xlfzz.gcp.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin')
-        db = client['watchdog']
-        collection = db[collection]
-    except Exception as e:
-        print('error connecting to mongo!')
-        raise e
-    finally:
-        client.close()
-
-    return client, collection
 
 
 @app.route('/mpu/prefrences/<mpu_id>', methods=['GET'])
@@ -39,21 +24,35 @@ def get_mpu_config(mpu_id):
 
 @app.route('/mpu/trigger/<mpu_id>', methods=['POST'])
 def mpu_notification(mpu_id):
+    # Save the file
     timehex = hex(int(time.time()))
-    f = open('localStorage/' + timehex + ".jpg", "wb")
-    f.write(decodebytes(request.data))
-    f.close()
+    with open('localStorage/' + timehex + ".jpg", "wb") as f:
+        f.write(decodebytes(request.data))
 
-    print(request.headers["Metadata"])
+    # Update notifications table
     client, collection = connect('notifications')
+    text = parse_results(request.headers["Metadata"])
     notification = {'mpu_id': int(mpu_id),
-                    'description': "test",  # request.headers["Metadata"],
-                    'time': datetime.datetime.now(),
+                    'description': text,
+                    'time': datetime.datetime.utcnow(),
                     'photo': timehex}
     collection.insert_one(notification)
     client.close()
 
-    socketio.emit('notification', {'update': True}, broadcast=True)
+    # check user settings
+    client, collection = connect('users')
+    user = collection.find_one({"mpu_id": int(mpu_id)})
+    client.close()
+
+    # update corisponding front-ends
+    if user['contact_web']:
+        socketio.emit('notification', {'update': True}, broadcast=True)
+
+    if user['contact_sms']:
+        send_text(user['phone'], text)
+
+    if user['contact_email']:
+        send_email(user['email'], text, decodebytes(request.data))
 
     return "Success!", 200
 
@@ -126,10 +125,9 @@ def verify_user(username, password):
     return 'false', 403
 
 
-@app.route('/test', methods=['GET'])
+@app.route('/test_connection', methods=['GET'])
 def test():
-    socketio.emit('notification', {'update': True}, broadcast=True)
-    return "Success!"
+    return "Success!", 200
 
 
 @socketio.on('connect')
