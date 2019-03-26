@@ -27,8 +27,15 @@ wheels/
 .installed.cfg
 *.egg
 MANIFEST
+<<<<<<< HEAD
+model/yolov2-tiny.weights
+model/yolov2.weights
+flaskApp/*.jpg
+.idea/
+=======
 piApp/model/yolov2-tiny.weights
 piApp/model/yolov2.weights
+>>>>>>> 5a403f57f1d39cc3ab47cd6ccea40ff7dfdafb57
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

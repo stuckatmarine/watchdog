@@ -11,4 +11,12 @@
     color: theme-color('light');
     text-transform: uppercase;
   }
+
+  thumbnail img:hover {
+    position:relative;
+    width:800px;
+    height:auto;
+    display:block;
+    z-index:999;
+  }
 }

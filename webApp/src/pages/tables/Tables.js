@@ -5,8 +5,6 @@ import {
   Row,
   Col,
   Table,
-  Progress,
-  Badge,
   Breadcrumb,
   BreadcrumbItem,
 } from 'reactstrap';
@@ -15,6 +13,7 @@ import Widget from '../../components/Widget';
 import s from './Static.scss';
 import me from '../../data/queries/me';
 import io from "socket.io-client";
+const addr = 'http://127.0.0.1:5000';
 
 class Tables extends Component {
 
@@ -25,104 +24,53 @@ class Tables extends Component {
       data: [''],
 
       tableStyles: [
-        { info: {type: '', dimensions: '', }, date: new Date(''), progress: { percent: 0, }, },
-        { info: {type: '', dimensions: '', }, date: new Date(''), progress: { percent: 0, }, },
-        { info: {type: '', dimensions: '', }, date: new Date(''), progress: { percent: 0, }, },
-        { info: {type: '', dimensions: '', }, date: new Date(''), progress: { percent: 0, }, },
-        { info: {type: '', dimensions: '', }, date: new Date(''), progress: { percent: 0, }, },
+        { date: new Date(''), },
+        { date: new Date(''), },
+        { date: new Date(''), },
+        { date: new Date(''), },
+        { date: new Date(''), },
       ],
-      response: "test",
-
-      endpoint: {
-        endpoint: "http://127.0.0.1:5000/",
-        username: me.type.name,
-        headers: {"Content-Type" : "application/json"},
-      },
     };
   }
 
   getData(){
-    axios.get(`http://127.0.0.1:5000/user/notifications/${me.type.name}`)
+    axios.get(addr + '/user/notifications/' + me.type.name)
       .then(response =>
         this.setState({
           tableStyles: [{
             id: 1,
-            picture: response.data["0"].photo,
+            picture: addr + '/user/render_image/' + response.data["0"].photo,
             description: response.data["0"].description,
-            info: {
-              type: 'JPEG',
-              dimensions: '200x150',
-            },
-            date: new Date('September 14, 2012'),
+            date: new Date(response.data["0"].time["$date"]),
             unit: response.data["0"].mpu_id,
-            progress: {
-              percent: 29,
-              colorClass: 'success',
-            },
           },
             {
               id: 2,
-              picture: response.data["1"].photo,
+              picture: addr + '/user/render_image/' + response.data["1"].photo,
               description: response.data["1"].description,
-              info: {
-                type: 'PSD',
-                dimensions: '2400x1455',
-              },
-              date: new Date('November 14, 2012'),
+              date: new Date(response.data["1"].time["$date"]),
               unit: response.data["1"].mpu_id,
-              progress: {
-                percent: 33,
-                colorClass: 'warning',
-              },
             },
             {
               id: 3,
-              picture: response.data["2"].photo,
+              picture: addr + '/user/render_image/' + response.data["2"].photo,
               description: response.data["2"].description,
-              label: {
-                colorClass: 'success',
-                text: 'INFO!',
-              },
-              info: {
-                type: 'JPEG',
-                dimensions: '200x150',
-              },
-              date: new Date('September 14, 2012'),
+              date: new Date(response.data["2"].time["$date"]),
               unit: response.data["2"].mpu_id,
-              progress: {
-                percent: 38,
-                colorClass: 'inverse',
-              },
             },
             {
               id: 4,
-              picture: response.data["3"].photo,
+              picture: addr + '/user/render_image/' + response.data["3"].photo,
               description: response.data["3"].description,
-              info: {
-                type: 'PNG',
-                dimensions: '210x160',
-              },
-              date: new Date('September 15, 2012'),
+              date: new Date(response.data["0"].time["$date"]),
               unit: response.data["3"].mpu_id,
-              progress: {
-                percent: 17,
-                colorClass: 'danger',
-              },
             },
             {
               id: 5,
-              picture: response.data["4"].photo,
+              picture: addr + '/user/render_image/' + response.data["4"].photo,
               description: response.data["4"].description,
-              info: {
-                type: 'JPEG',
-                dimensions: '1452x1320',
-              },
-              date: new Date('October 1, 2012'),
+              date: new Date(response.data["4"].time["$date"]),
               unit: response.data["4"].mpu_id,
-              progress: {
-                percent: 41,
-                colorClass: 'primary',
-              },
             },
           ]
         }))
@@ -130,7 +78,12 @@ class Tables extends Component {
 
   componentDidMount() {
     this.getData();
-    const socket = io("http://127.0.0.1:5000/");
+    const socket = io.connect(addr);
+
+    socket.on('connect', function () {
+      console.log("connected to flask socket!");
+    });
+
     socket.on("notification", (response) => {
       if (response.update === true) {
         console.log("updated the table!");
@@ -167,10 +120,8 @@ class Tables extends Component {
                   <th className="hidden-sm-down">#</th>
                   <th>Picture</th>
                   <th>Description</th>
-                  <th className="hidden-sm-down">Info</th>
                   <th className="hidden-sm-down">Date</th>
                   <th className="hidden-sm-down">unit</th>
-                  <th />
                 </tr>
                 </thead>
                 <tbody>
@@ -179,42 +130,18 @@ class Tables extends Component {
                     <tr key={row.id}>
                       <td>{row.id}</td>
                       <td>
-                        <img className="img-rounded" src={row.picture} alt="" height="60" />
+                        <thumbnail>
+                          <img className="img-rounded" src={row.picture} alt="" width="200" />
+                        </thumbnail>
                       </td>
                       <td>
                         {row.description}
-                        {row.label &&
-                        <div>
-                          <Badge color={row.label.colorClass}>{row.label.text}</Badge>
-                        </div>
-                        }
-                      </td>
-                      <td>
-                        <p className="mb-0">
-                          <small>
-                            <span className="fw-semi-bold">Type:</span>
-                            <span className="text-muted">&nbsp; {row.info.type}</span>
-                          </small>
-                        </p>
-                        <p>
-                          <small>
-                            <span className="fw-semi-bold">Dimensions:</span>
-                            <span className="text-muted">&nbsp; {row.info.dimensions}</span>
-                          </small>
-                        </p>
                       </td>
                       <td className="text-semi-muted">
                         {this.parseDate(row.date)}
                       </td>
                       <td className="text-semi-muted">
                         {row.unit}
-                      </td>
-                      <td className="width-150">
-                        <Progress
-                          style={{height: '7px'}}
-                          color="success" value={row.progress.percent}
-                          className="progress-sm mb-xs rounded mt-xs"
-                        />
                       </td>
                     </tr>,
                   )

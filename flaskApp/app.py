@@ -1,28 +1,17 @@
+from tools import connect, parse_results, send_text, send_email
 from base64 import decodebytes
-from pymongo import MongoClient
-from flask import Flask, request, render_template
+from flask import Flask, request, send_file
 from bson.json_util import dumps
 from flask_cors import CORS
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO
 import time
 import os
+import threading
+import datetime
 
 app = Flask(__name__)
 CORS(app)
-socketio = SocketIO(app)
-
-
-def connect(collection):
-    try:
-        client = MongoClient('mongodb://admin:admin@cluster0-shard-00-00-xlfzz.gcp.mongodb.net:27017,cluster0-shard-00-01-xlfzz.gcp.mongodb.net:27017,cluster0-shard-00-02-xlfzz.gcp.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin')
-        db = client['watchdog']
-        collection = db[collection]
-    except:
-        print('error connecting to mongo!')
-    finally:
-        client.close()
-
-    return client, collection
+socketio = SocketIO(app, ping_timeout=360000)
 
 
 @app.route('/mpu/prefrences/<mpu_id>', methods=['GET'])
@@ -35,20 +24,43 @@ def get_mpu_config(mpu_id):
 
 @app.route('/mpu/trigger/<mpu_id>', methods=['POST'])
 def mpu_notification(mpu_id):
+    # Save the file
     timehex = hex(int(time.time()))
-    f = open(timehex + ".jpg", "wb")
-    f.write(decodebytes(request.data))
-    f.close()
-    notify_user("user")
+    with open('localStorage/' + timehex + ".jpg", "wb") as f:
+        f.write(decodebytes(request.data))
+
+    # Update notifications table
+    client, collection = connect('notifications')
+    text = parse_results(request.headers["Metadata"])
+    notification = {'mpu_id': int(mpu_id),
+                    'description': text,
+                    'time': datetime.datetime.utcnow(),
+                    'photo': timehex}
+    collection.insert_one(notification)
+    client.close()
+
+    # check user settings
+    client, collection = connect('users')
+    user = collection.find_one({"mpu_id": int(mpu_id)})
+    client.close()
+
+    # update corisponding front-ends
+    if user['contact_web']:
+        socketio.emit('notification', {'update': True}, broadcast=True)
+
+    if user['contact_sms']:
+        send_text(user['phone'], text)
+
+    if user['contact_email']:
+        send_email(user['email'], text, decodebytes(request.data))
+
     return "Success!", 200
 
 
-"""
-@app.route('/user/render_image', methods=['GET'])
-def show_index():
-    full_filename = os.path.join(app.config['UPLOAD_FOLDER'], 'shovon.jpg')
-    return render_template("index.html", user_image = full_filename)
-"""
+@app.route('/user/render_image/<photo>', methods=['GET'])
+def show_index(photo):
+    return send_file(os.path.join('localStorage', photo + '.jpg'))
+
 
 @app.route('/user/notifications/<username>', methods=['GET'])
 def get_user_notifications(username):
@@ -58,7 +70,7 @@ def get_user_notifications(username):
     client.close()
 
     client, collection = connect('notifications')
-    notifications = collection.find({"mpu_id": {"$in": mpu_ids}}).sort("time", 1).limit(5)
+    notifications = collection.find({"mpu_id": {"$in": mpu_ids}}).sort("time", -1).limit(5)
     client.close()
 
     return dumps(notifications)
@@ -113,20 +125,19 @@ def verify_user(username, password):
     return 'false', 403
 
 
-@app.route('/user/notify/<username>', methods=['POST'])
-def notify_user(username):
-    emit('notification', {'update': True})
+@app.route('/test_connection', methods=['GET'])
+def test():
+    return "Success!", 200
 
 
 @socketio.on('connect')
 def socket_connect():
-    print("\n hmm", request.sid, "Connected! \n")
-    emit('notification', {'update': True})
+    print(request.sid, "Connected! \n")
 
 
 @socketio.on('disconnect')
 def socket_disconnect():
-    print("\n hmm", request.sid, "Disconnection! \n")
+    print(request.sid, "Disconnection! \n")
 
 
 @socketio.on_error_default  # handles all errors
@@ -136,6 +147,9 @@ def default_error_handler(e):
 
 
 if __name__ == '__main__':
-    # socketio.run(app)
-    #app.run(host='192.168.137.135', port=5000)
-    app.run(host='127.0.0.1', port=5000)
+    sock_thread = threading.Thread(socketio.run(app, host='127.0.0.1', port=5000))
+    sock_thread.start()
+
+    # host='192.168.137.135'
+    flask_thread = threading.Thread(app.run(host='127.0.0.1', port=5000))
+    flask_thread.start()
