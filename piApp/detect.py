@@ -1,19 +1,24 @@
 from keras.models import load_model
 from PIL import Image, ImageDraw, ImageFont
 from itertools import product
-import numpy as np
 from yad2k_out import get_model
+import numpy as np
 import datetime as dt
 import model_configs as configs
+import model_tiny_configs as tiny_configs
 
 model = None
 COLORS = np.random.uniform(0, 255, size=(5, 3))
 
-def load_yolo_model():
+def load_yolo_model(tiny = False):
     global model
-    print("Loading model")
-    model = get_model(configs.CONFIG_PATH, configs.WEIGHTS_PATH)
-    #model = get_model(configs.TCONFIG_PATH, configs.TWEIGHTS_PATH)
+    if not tiny:
+        print("Loading model")
+        model = get_model(configs.CONFIG_PATH, configs.WEIGHTS_PATH)
+    else:
+        print("Loading tiny model")
+        configs = tiny_configs
+        model = get_model(tiny_configs.CONFIG_PATH, tiny_configs.WEIGHTS_PATH)
 
 def get_classes(classes_path):
     """ Loads classes from text file 
@@ -142,16 +147,20 @@ def find_centers(im_xy, im_wh, im_confidence, im_class_probs, class_names, min_c
                 objects[class_name] = objects.get(class_name, []) + [{"confidence" : str(int(confidence * 100)), "coors": coors, "center": center, "x": x, "y": y, "w": w, "h": h, "xywh":xywh }]
     return objects
 
-def detect_from_image(image, pic_name):
+def detect_from_image(image, pic_name, confJson):
 
     if type(image) is str:
         image = Image.open(image)
 
-    anchors = get_anchors(configs.ANCHORS_PATH)
-    class_names, _ = get_classes(configs.CLASSES_PATH)
+    if not confJson["tiny"]:
+        anchors = get_anchors(configs.ANCHORS_PATH)
+        class_names, _ = get_classes(configs.CLASSES_PATH)
+        im_in = transform_image(image, configs.MODEL_IMAGE_SIZE)
+    else:
+        anchors = get_anchors(tiny_configs.ANCHORS_PATH)
+        class_names, _ = get_classes(tiny_configs.CLASSES_PATH)
+        im_in = transform_image(image, tiny_configs.MODEL_IMAGE_SIZE)
     num_classes = len(class_names)
-
-    im_in = transform_image(image, configs.MODEL_IMAGE_SIZE)
 
     global model
     if model is None:
@@ -160,8 +169,11 @@ def detect_from_image(image, pic_name):
     out = model.predict(im_in)
     box_xy, box_wh, box_confidence, box_class_probs = detect_from_model_output(out, anchors, num_classes)
     im_xy, im_wh, im_confidence, im_class_probs = fit_to_image(image, box_xy, box_wh, box_confidence, box_class_probs)
-    objects = find_centers(im_xy, im_wh, im_confidence, im_class_probs, class_names, configs.MIN_CONFIDENCE, configs.MAX_OVERLAP)
-    
+    if not confJson["tiny"]:
+        objects = find_centers(im_xy, im_wh, im_confidence, im_class_probs, class_names, configs.MIN_CONFIDENCE, configs.MAX_OVERLAP)
+    else:
+        objects = find_centers(im_xy, im_wh, im_confidence, im_class_probs, class_names, tiny_configs.MIN_CONFIDENCE, tiny_configs.MAX_OVERLAP)
+ 
     drawDone = False
     timestamp = ""
     for key in objects:

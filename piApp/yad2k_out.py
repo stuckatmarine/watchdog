@@ -147,6 +147,8 @@ def get_model(config_path, weights_path, verbose=False):
                     bn_weights[2]  # running var
                 ]
 
+
+            print("weights size = " + str(weights_size))
             conv_weights = np.ndarray(
                 shape=darknet_w_shape,
                 dtype='float32',
