@@ -27,7 +27,7 @@ TEMP_FILE_NAME = "temp.jpg"
 TIME_FORMAT = "%Y.%m.%d_%H.%M.%S"
 TIME_FORMATP = "%Y-%m-%d_%H:%M:%S"
 PIC_DIRECTORY = "pics/"
-REQUEST_TIMEOUT = 5
+REQUEST_TIMEOUT = 2
 
 def setup_camera(vflip, hflip):
     camera = picamera.PiCamera()
