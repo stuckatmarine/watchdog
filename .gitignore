@@ -30,6 +30,7 @@ MANIFEST
 <<<<<<< HEAD
 model/yolov2-tiny.weights
 model/yolov2.weights
+model/yolov2-tiny-voc.weights
 flaskApp/*.jpg
 .idea/
 =======

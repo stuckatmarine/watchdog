@@ -22,11 +22,12 @@ ap.add_argument("--hflip", action="store_true", help="flip images taken from cam
 
 args = vars(ap.parse_args())
 
-dotCom = "http://192.168.137.135:5000"
+dotCom = "http://192.168.137.224:5000"
 TEMP_FILE_NAME = "temp.jpg"
 TIME_FORMAT = "%Y.%m.%d_%H.%M.%S"
 TIME_FORMATP = "%Y-%m-%d_%H:%M:%S"
 PIC_DIRECTORY = "pics/"
+REQUEST_TIMEOUT = 2
 
 def setup_camera(vflip, hflip):
     camera = picamera.PiCamera()
@@ -34,28 +35,33 @@ def setup_camera(vflip, hflip):
     camera.hflip = hflip
     return camera
 
-def sendImage(imgName):
-    openFile = open(imgName, 'rb')
-    headers = {"metadata":[imgName]}
-    with open(imgName, 'rb') as img:
-        files = {"image": (imgName,img,'imgNameConfirmation',{'Expires': '0'})}
-        url = dotCom + "/mpu/trigger/" + str(args["mpuid"])
-        print ("sending " + imgName + " notification")
-        imgStr = base64.b64encode(img.read())
-        print ("imgStr" + imgStr[:10])
-        response = requests.post(url, data=imgStr)
-        '''with requests.Session() as s:
-            r = s.post(url,files=files)
-        '''
-        print(response.status_code)
+# send image and metadata as http post request to srver
+def sendImage(imgName, objects = "testImg"):
+    #openFile = open(imgName, 'rb')
+    print ("Sending " + imgName + " notification")
+    try:
+        with open(imgName, 'rb') as img:
+            url = dotCom + "/mpu/trigger/" + str(args["mpuid"])
+            
+            # endcode image to string file for transmission, to be decoded later
+            imgStr = base64.b64encode(img.read())
+
+            try:
+                response = requests.post(url, data=imgStr, headers={"metadata":json.dumps(objects)}, timeout=REQUEST_TIMEOUT)
+                print("Post response code : " + response.status_code)
+            except requests.exceptions.RequestException as e:
+                print(e)
+    except EnvironmentError as e:
+        print(e)
         
+# primary function for tracking dog/ other objects
 def track(camera, interval, start_time, end_time, directory, confJson):
     print(interval)
     next_picture_time = dt.datetime.now() + dt.timedelta(minutes=float(interval))
     dtn = dt.datetime.now()
     pic_name = '{}/{}.jpg'.format(PIC_DIRECTORY, dtn.strftime(TIME_FORMATP))
     camera.capture(TEMP_FILE_NAME)
-    objects = detect.detect_from_image(TEMP_FILE_NAME, pic_name)
+    objects = detect.detect_from_image(TEMP_FILE_NAME, pic_name, confJson)
     file_name = '{}/{}.json'.format(directory, dtn.strftime(TIME_FORMAT))
 
     with open(file_name, 'w') as fp:
@@ -69,14 +75,14 @@ def track(camera, interval, start_time, end_time, directory, confJson):
             sendB = True
             break
     if sendB == True:
-        sendImage('{}{}.jpg'.format(PIC_DIRECTORY, dtn.strftime(TIME_FORMATP)))
+        sendImage('{}{}.jpg'.format(PIC_DIRECTORY, dtn.strftime(TIME_FORMATP)), objects)
 
     print("Next picture will be taken at {}".format(next_picture_time.strftime(TIME_FORMAT)))    
     seconds_to_sleep = (next_picture_time - dtn).total_seconds()
     seconds_to_sleep = max(0, seconds_to_sleep)
     return seconds_to_sleep
 
-# needed for parsing json in python 2.7, removes 'u' char
+# needed for parsing json in python 2.7, removes 'u' unix added char
 def byteify(input):
     if isinstance(input, dict):
         return {byteify(key): byteify(value)
@@ -92,25 +98,27 @@ def byteify(input):
 if __name__ == "__main__":
     
     # get up to date config file from server, else use local one
-    print("get configuration info from server")
-    r = requests.get(dotCom + "/mpu/prefrences/" + str(args["mpuid"]))
-    if r.status_code == 200:
-        
-        confJson = r.json()
-    else:
-        print(r.status_code)
-        print(r.text)
-        print("config from server no good, using local file")
+    print("Requesting to configuration info from server")
+    remote = False
+    try:
+        r = requests.get(dotCom + "/mpu/prefrences/" + str(args["mpuid"]), timeout=REQUEST_TIMEOUT)
+        print("Request response code : " + r.status_code)
+        if r.status_code == 200:
+            confJson = r.json()
+            remote = True
+    except requests.exceptions.RequestException as e:
+        print(e)
+    
+    if not remote:
+        print("Config from server no good, using local file")
         confJson = byteify(json.load(open(args["config"])))	
-        print(confJson['startTime'])
-    
-    #confJson = byteify(json.load(open(args["config"])))	
-    
-    print("sending test image")
-    sendImage("temp.jpg")
+
+    # server test
+    print("Sending last img as server test")
+    sendImage(TEMP_FILE_NAME)
 
     # create camera instance
-    print("warming up camera")
+    print("Warming up camera")
     camera = setup_camera(confJson["vFlip"], confJson["hFlip"])
 
     # confirm operational times for WatchDog to operate
@@ -125,26 +133,25 @@ if __name__ == "__main__":
         end_time = parser.parse(confJson["end"])
         if end_time < start_time:
             end_time + dt.timedelta(days=1)
-    print("StartTime {} -> EndTime {}", start_time, end_time)
+    print("StartTime  {}".format(start_time))
+    print("EndTime    {}".format(end_time))
     
-    # build yolo model from weights, only done once per fun
-    print("Building model ~1.5mins")
-    detect.load_yolo_model()
+    # build yolo model from weights, only done once per run
+    print("Building yolo model from source (~1.5mins)")
+    detect.load_yolo_model(confJson["tiny"])
     
     # sleep if outside operational time window
-    print("Starting watchdog...")
     if start_time > dt.datetime.now():
         sleep_seconds = (start_time - dt.datetime.now()).seconds
-        print("Sleep until : ", start_time.strftime(TIME_FORMAT))
+        print("Currently outside running timeframe. Sleep until : ", start_time.strftime(TIME_FORMAT))
         time.sleep(sleep_seconds)
 
-    # if operational, print how long WatchDog will run from now in sec's
+    print("---------  Starting watchdog  ---------")
+    
     if end_time is not None:
         print("Running until {}".format(end_time.strftime(TIME_FORMAT)))
-    else:
-        end_time = dt.datetime.max
-    
+        
     # take snapshot and track objects based on confJson
     while dt.datetime.now() < end_time:
-        sleepTime = track(camera=camera, interval=confJson["interval"], start_time=start_time, end_time=end_time, directory=args["dir"], confJson=confJson)
-        time.sleep(sleepTime)
+        nextPicDelay = track(camera=camera, interval=confJson["interval"], start_time=start_time, end_time=end_time, directory=args["dir"], confJson=confJson)
+        time.sleep(nextPicDelay)
