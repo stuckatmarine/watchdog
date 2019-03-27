@@ -22,14 +22,14 @@ const Sidebar = () => (
         glyph="dashboard"
       />
       <LinksGroup
-        header="Settings"
-        headerLink="/app/profile"
-        glyph="typography"
-      />
-      <LinksGroup
         header="Notifications"
         headerLink="/app/notifications"
         glyph="notifications"
+      />
+      <LinksGroup
+        header="Profile"
+        headerLink="/app/profile"
+        glyph="typography"
       />
     </ul>
   </nav>

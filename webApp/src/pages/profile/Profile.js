@@ -174,7 +174,7 @@ class Profile extends PureComponent {
     return (
       <div className={s.root}>
         <Breadcrumb>
-          <BreadcrumbItem>YOU ARE HERE</BreadcrumbItem>
+          <BreadcrumbItem>Home</BreadcrumbItem>
           <BreadcrumbItem active>Profile</BreadcrumbItem>
         </Breadcrumb>
         <h1 className="mb-lg">Profile</h1>
@@ -259,46 +259,6 @@ class Profile extends PureComponent {
                   </Col>
                 </Row>
                 <br/>
-                <Row>
-                  <Col sm={3}>
-                    <div className="d-flex">
-                      <div className="abc-checkbox">
-                        <Input id="input-contact-web" type="checkbox" checked={this.state.contact_web} onChange={this.toggleWeb}/>
-                        <Label for="input-contact-web" />
-                      </div>
-                      <h5><span>Web App Notifications</span></h5>
-                    </div>
-                  </Col>
-                  <Col sm={3}>
-                    <div className="d-flex">
-                      <div className="abc-checkbox">
-                        <Input id="input-contact-app" type="checkbox" checked={this.state.contact_app} onChange={this.toggleApp}/>
-                        <Label for="input-contact-app" />
-                      </div>
-                      <h5><span>Mobile App Notifications</span></h5>
-                    </div>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col sm={3}>
-                    <div className="d-flex">
-                      <div className="abc-checkbox">
-                        <Input id="input-contact-email" type="checkbox" defaultChecked={this.state.contact_email} onChange={this.toggleEmail}/>
-                        <Label for="input-contact-email" />
-                      </div>
-                      <h5><span>Email Notifications</span></h5>
-                    </div>
-                  </Col>
-                  <Col sm={3}>
-                    <div className="d-flex">
-                      <div className="abc-checkbox">
-                        <Input id="input-contact-sms" type="checkbox" defaultChecked={this.state.contact_sms} onChange={this.toggleSMS}/>
-                        <Label for="input-contact-sms" />
-                      </div>
-                      <h5><span>SMS Notifications</span></h5>
-                    </div>
-                  </Col>
-                </Row>
                 <div className="d-flex justify-content-end">
                   <Row>
                     <Col>

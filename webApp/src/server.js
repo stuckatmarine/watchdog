@@ -179,11 +179,11 @@ app.get('*', async (req, res, next) => {
     css.add(theme._getCss());
 
     const data = {
-      title: 'React Dashboard',
+      title: 'Watchdog Dashboard',
       description:
-        'React Admin Starter project based on react-router 4, redux, graphql, bootstrap 4',
+        'Watchdog starter project based on react-router 4, redux, graphql, bootstrap 4',
       keywords: 'react dashboard, react admin template, react dashboard open source, react starter, react admin, react themes, react dashboard template',
-      author: 'Flatlogic LLC'
+      author: 'Andrew Nash & Mark Duffett'
     };
     data.styles = [{ id: 'css', cssText: [...css].join('') }];
     data.scripts = [assets.vendor.js, assets.client.js];
