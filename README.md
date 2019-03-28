@@ -22,9 +22,9 @@ Be like Noah.<br/>
 - [x] object recognition on raspberry pi
 - [x] server to communicate with pi/user/database
 - [x] web app for server/database configuration
-- [ ] Specifiy parameters for user to be notified about
-- [ ] Notify user via email/sms
+- [X] Specifiy parameters for user to be notified about
+- [X] Notify user via email/sms
 
 ### Second iteration
-- [ ] Optomize object recognition
+- [X] Optomize object recognition w tiny weights
 - [ ] Android application user interface for configuration/notifications
