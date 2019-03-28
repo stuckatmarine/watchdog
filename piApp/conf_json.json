@@ -1,6 +1,6 @@
 {
 	"mpuid" : 123,
-	"interval" : 0.00,
+	"interval" : 0.1,
 	"startTime" : "None",
 	"endTime" : "None",
 	"vFlip" : true,

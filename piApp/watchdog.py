@@ -22,12 +22,12 @@ ap.add_argument("--hflip", action="store_true", help="flip images taken from cam
 
 args = vars(ap.parse_args())
 
-dotCom = "http://192.168.137.224:5000"
+dotCom = "http://192.168.43.7:5000"
 TEMP_FILE_NAME = "temp.jpg"
 TIME_FORMAT = "%Y.%m.%d_%H.%M.%S"
 TIME_FORMATP = "%Y-%m-%d_%H:%M:%S"
 PIC_DIRECTORY = "pics/"
-REQUEST_TIMEOUT = 2
+REQUEST_TIMEOUT = 10
 
 def setup_camera(vflip, hflip):
     camera = picamera.PiCamera()
@@ -48,7 +48,7 @@ def sendImage(imgName, objects = "testImg"):
 
             try:
                 response = requests.post(url, data=imgStr, headers={"metadata":json.dumps(objects)}, timeout=REQUEST_TIMEOUT)
-                print("Post response code : " + response.status_code)
+                print("Post response code : " + str(response.status_code))
             except requests.exceptions.RequestException as e:
                 print(e)
     except EnvironmentError as e:
@@ -78,7 +78,7 @@ def track(camera, interval, start_time, end_time, directory, confJson):
         sendImage('{}{}.jpg'.format(PIC_DIRECTORY, dtn.strftime(TIME_FORMATP)), objects)
 
     print("Next picture will be taken at {}".format(next_picture_time.strftime(TIME_FORMAT)))    
-    seconds_to_sleep = (next_picture_time - dtn).total_seconds()
+    seconds_to_sleep = (next_picture_time - dt.datetime.now() ).total_seconds()
     seconds_to_sleep = max(0, seconds_to_sleep)
     return seconds_to_sleep
 
@@ -102,7 +102,7 @@ if __name__ == "__main__":
     remote = False
     try:
         r = requests.get(dotCom + "/mpu/prefrences/" + str(args["mpuid"]), timeout=REQUEST_TIMEOUT)
-        print("Request response code : " + r.status_code)
+        print("Request response code : " + str(r.status_code))
         if r.status_code == 200:
             confJson = r.json()
             remote = True
@@ -114,8 +114,8 @@ if __name__ == "__main__":
         confJson = byteify(json.load(open(args["config"])))	
 
     # server test
-    print("Sending last img as server test")
-    sendImage(TEMP_FILE_NAME)
+    #print("Sending last img as server test")
+    #sendImage(TEMP_FILE_NAME)
 
     # create camera instance
     print("Warming up camera")
@@ -137,7 +137,7 @@ if __name__ == "__main__":
     print("EndTime    {}".format(end_time))
     
     # build yolo model from weights, only done once per run
-    print("Building yolo model from source (~1.5mins)")
+    print("Building yolo model from source (~30s)")
     detect.load_yolo_model(confJson["tiny"])
     
     # sleep if outside operational time window
