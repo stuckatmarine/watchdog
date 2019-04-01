@@ -15,7 +15,7 @@ in [package.json](../package.json) file.
 $ yarn install
 ```
 
-### 3. Run 
+### Run 
 
 This command will build the app from the source files (`/src`) into the output
 `/build` folder. As soon as the initial build completes, it will start the
