@@ -1,10 +1,18 @@
 # Backend Flask
 
-Basically this portion acts as the connection between the MPU and any front end
+Basically this portion of the stack acts as the connection between the MPU and any front end
 
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+
+```
+.
+├── /localStorage/     # Photo storage from notifications
+├── /app.py            # Main Flask file, should be used to run server
+├── /test.py           # Scrap file for testing during development
+├── /tools.py          # Helper methods for Flask to use
+```
 
 ### Prerequisites
 
