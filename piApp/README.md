@@ -1,7 +1,8 @@
 # Install Notes
-- Make sure to use python2.7 (not python 3!, Tensorflow is not compatable on pi for 3+)
-- Run watchdog.py, install dependencies with pip as needed
+- *Make sure to use python2.7 (not python 3!, Tensorflow is not compatable on pi for 3+)*
 - Run download_weights.sh to get weights (large files not normally stored on git)
+- Run watchdog.py, install dependencies with pip as needed</br>
+**To use autostart script** 
 - Update watchdogAutostart.sh with the location of your virtual env to activate
 - Edit your "/etc/xdg/lxsession/LXDE/autostart.txt" with "@/pathtomyscript/watchdogAutostart.sh" to run on startup
 
