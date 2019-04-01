@@ -11,7 +11,7 @@ $ download_weights.sh
 
 Get dependencies if you don't have them already
 ```shell
-$ pip install keras picamera numpy
+$ pip install keras picamera numpy tensorflow
 ```
 
 ### Run it
