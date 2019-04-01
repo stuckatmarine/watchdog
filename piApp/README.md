@@ -35,7 +35,7 @@ $ python watchdog.py
 * Take image based on time interval: /pics/sampleDog.jpg
 * Send notification to server if a specific class is identified in the image: 200 is the sucessfull response code.
 
-### Built With
+## Built With
 
 * [YOLOv2](https://pjreddie.com/darknet/yolo/) - Object detection
 * [TensorFlow](https://www.tensorflow.org/) - Machine Learning
