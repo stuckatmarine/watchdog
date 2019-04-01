@@ -22,6 +22,16 @@ If a desired object is found the image and yolo log data are sent to the server,
 The user configuration can be changed in real time on the web-app or locally on the Watchdog.<br/>
 
 
+## Getting Started
+
+Each sub folder has a respective portion of the stack and instructions on how to get it up and running on your local machine for development and testing purposes. The Watchdog database just base [MongoDB](https://www.mongodb.com/), so no there is no need to store related files here as it is hosted on Google Cloud (Flask will auto connect to this so internet is required).
+```
+.
+├── /flaskApp/       # Backend Flask app
+├── /piApp/          # Rasberry Pi object detection
+├── /webApp/         # Isomorphic web app
+```
+
 ## Architecture
 
 ### Stack Diagram
