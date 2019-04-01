@@ -3,7 +3,7 @@
 - Run download_weights.sh to get weights (large files not normally stored on git)
 - Run watchdog.py, install dependencies with pip as needed</br>
 **To use autostart script** 
-- Update watchdogAutostart.sh with the location of your virtual env to activate
+- Update watchdogAutostart.sh with the location of your virtual env to activate if one is used
 - Edit your "/etc/xdg/lxsession/LXDE/autostart.txt" with "@/pathtomyscript/watchdogAutostart.sh" to run on startup
 
 # Dev Tasks
