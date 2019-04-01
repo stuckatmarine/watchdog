@@ -1,4 +1,4 @@
-## Installation
+## Quick Start
 
 ### Pre
 Get python2.7 [here](https://www.python.org/download/releases/2.7/) (not python 3!, Tensorflow is not compatable on pi for 3+) 
@@ -28,7 +28,7 @@ $ python watchdog.py
 ## Sample post yolo image
 ![Sample Post Yolo image with Dog](pics/sampleDog.jpg)
 
-## Built With
+### Built With
 
 * [YOLOv2](https://pjreddie.com/darknet/yolo/) - Object detection
 * [Keras](https://keras.io/) - Machine Learning for object detection
