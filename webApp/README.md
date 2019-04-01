@@ -1,36 +1,4 @@
 ## Watchdog React Dashboard — An "[isomorphic](http://nerds.airbnb.com/isomorphic-javascript-future-web-apps/)" Web App
-## Built using 
-* [React](https://facebook.github.io/react/)
-* [Bootstrap](http://getbootstrap.com/)
-* [React Router](https://reacttraining.com/react-router/) (with **Server Side Rendering**!),
-* [Redux](http://redux.js.org/)
-* [GraphQL](http://graphql.org/)
-Based on [React Starter Kit](https://www.reactstarterkit.com)
-
-
-[![react-dashboard](screenshot.png)](https://flatlogic.com/admin-dashboards/react-dashboard/demo)
-
-This seed project is a sort of a free version of a template that may be found on
-[Themeforest](https://themeforest.net/category/site-templates/admin-templates)
-or [Wrapbootstrap](https://wrapbootstrap.com/themes/admin) with working backend integration.
-You may use it to bootstrap the development of your next web app.
-
-
-## Features
-* React
-* Server Side Rendering
-* Mobile friendly layout (responsive)
-* React Router
-* Bootstrap3
-* GraphQL
-* Nodejs backend inegration
-* Sass styles
-* Webpack build
-* Stylish, clean, responsive layout
-* Lots of utility css classes for rapid development (flatlogic css set)
-* Authentication
-* CRUD operations examples
-* Browsersync for the ease of development
 
 ## Quick Start
 
@@ -69,6 +37,34 @@ app on the fly and refresh all the connected browsers.
 
 For more info please refer to [getting started](./docs/getting-started.md) guide to download and run the project (Node.js >= 6.5)
 
-## License
+## Built using 
+* [React](https://facebook.github.io/react/)
+* [Bootstrap](http://getbootstrap.com/)
+* [React Router](https://reacttraining.com/react-router/) (with **Server Side Rendering**!),
+* [Redux](http://redux.js.org/)
+* [GraphQL](http://graphql.org/)
+
+This project is bootstraped from [Flatlogic](https://github.com/flatlogic/react-dashboard), which is a seed project of a free version of a template that may be found on [Themeforest](https://themeforest.net/category/site-templates/admin-templates)
+or [Wrapbootstrap](https://wrapbootstrap.com/themes/admin) with working backend integration.
+
+
+
+## Features
+* React
+* Server Side Rendering
+* Mobile friendly layout (responsive)
+* React Router
+* Bootstrap3
+* GraphQL
+* Nodejs backend inegration
+* Sass styles
+* Webpack build
+* Stylish, clean, responsive layout
+* Lots of utility css classes for rapid development (flatlogic css set)
+* Authentication
+* CRUD operations examples
+* Browsersync for the ease of development
+
+## Sub-Licenses
 
 [MIT](https://github.com/flatlogic/react-dashboard/blob/master/LICENSE.txt) and another [MIT](https://github.com/flatlogic/react-dashboard/blob/master/LICENSE-react-starter-kit.txt) from RSK.
