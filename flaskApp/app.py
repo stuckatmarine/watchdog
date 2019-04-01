@@ -167,9 +167,9 @@ def default_error_handler(e):
 
 
 if __name__ == '__main__':
-    sock_thread = threading.Thread(socketio.run(app, host='192.168.43.7', port=5000))
+    sock_thread = threading.Thread(socketio.run(app, host='127.0.0.1', port=5000))
     sock_thread.start()
 
     # host='192.168.137.135'
-    flask_thread = threading.Thread(app.run(host='192.168.43.7', port=5000))
+    flask_thread = threading.Thread(app.run(host='127.0.0.1', port=5000))
     flask_thread.start()
