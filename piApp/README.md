@@ -38,7 +38,8 @@ $ python watchdog.py
 ### Built With
 
 * [YOLOv2](https://pjreddie.com/darknet/yolo/) - Object detection
-* [Keras](https://keras.io/) - Machine Learning for object detection
+* [TensorFlow](https://www.tensorflow.org/) - Machine Learning
+* [Keras](https://keras.io/) - TensorFlow API
 * [Pi Camera](https://picamera.readthedocs.io/en/release-1.13/) - Pi Camera operation
 * [Numpy](http://www.numpy.org/) - Math for all the things
 
