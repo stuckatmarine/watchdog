@@ -11,14 +11,14 @@ $ download_weights.sh
 
 Get dependencies if you don't have them already
 ```shell
-pip install keras picamera numpy
+$ pip install keras picamera numpy
 ```
 
 ### Run it
 
 Run the main program
 ```shell
-python watchdog.py
+$ python watchdog.py
 ```
 
 **To use autostart script** 
