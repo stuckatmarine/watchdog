@@ -38,5 +38,5 @@ $ python -m flask run
 * [Flask Socketio](https://flask-socketio.readthedocs.io/en/latest/) - Sockets for live web updates
 * [Flask Cors](https://flask-cors.readthedocs.io/en/latest/) - For cross origin with any MPU
 * [Pymongo](https://maven.apache.org/) - Database connection
-* [twilio](https://www.twilio.com/) - Text Notifications
-* [environs](https://pypi.org/project/environs/) - env variables for secret stuff
+* [Twilio](https://www.twilio.com/) - Text Notifications
+* [Environs](https://pypi.org/project/environs/) - env variables for secret stuff
