@@ -13,7 +13,7 @@ import Widget from '../../components/Widget';
 import s from './Static.scss';
 import me from '../../data/queries/me';
 import io from "socket.io-client";
-const addr = 'http://127.0.0.1:5000';
+const addr = 'http://192.168.43.7:5000';
 
 class Tables extends Component {
 

@@ -8,6 +8,7 @@ import time
 import os
 import threading
 import datetime
+import json
 
 app = Flask(__name__)
 CORS(app)
@@ -31,7 +32,7 @@ def mpu_notification(mpu_id):
 
     # Update notifications table
     client, collection = connect('notifications')
-    text = parse_results(request.headers["Metadata"])
+    text = parse_results(json.loads(request.headers["Metadata"]))
     notification = {'mpu_id': int(mpu_id),
                     'description': text,
                     'time': datetime.datetime.utcnow(),
@@ -88,8 +89,7 @@ def get_user_info(username):
 @app.route('/user/prefrences/<username>', methods=['POST'])
 def update_user_info(username):
     client, collection = connect('users')
-    print(request.get_json())
-    """
+    # print(request.get_json())
     collection.update_one({"username": username.lower()},
                            {"$set":
                                {"email": request.get_json()["email"],
@@ -101,17 +101,37 @@ def update_user_info(username):
                                 "city": request.get_json()["city"],
                                 "province": request.get_json()["province"],
                                 "postal_code": request.get_json()["postal_code"],
+                                }
+                            })
+    client.close()
+
+    return "Success!"
+
+
+@app.route('/user/settings/<username>', methods=['POST'])
+def update_user_settings(username):
+    client, collection = connect('users')
+    # print(request.get_json())
+    collection.update_one({"username": username.lower()},
+                           {"$set":
+                               {"email": request.get_json()["email"],
+                                "phone": request.get_json()["phone"],
+                                "mpuid.startTime": request.get_json()["start_time"],
+                                "mpuid.endTime": request.get_json()["end_time"],
+                                "mpuid.interval": request.get_json()["interval"],
+                                "mpuid.vFlip": request.get_json()["v_flip"],
+                                "mpuid.hFlip": request.get_json()["h_flip"],
+                                "mpuid.minConfidence": request.get_json()["min_confidence"],
+                                "mpuid.classNames": request.get_json()["object"],
                                 "contact_sms": request.get_json()["contact_sms"],
                                 "contact_app": request.get_json()["contact_app"],
                                 "contact_web": request.get_json()["contact_web"],
                                 "contact_email": request.get_json()["contact_email"]
                                 }
                             })
-    """
     client.close()
 
     return "Success!"
-
 
 @app.route('/user/verify/<username>/<password>', methods=['GET'])
 def verify_user(username, password):
@@ -147,9 +167,9 @@ def default_error_handler(e):
 
 
 if __name__ == '__main__':
-    sock_thread = threading.Thread(socketio.run(app, host='127.0.0.1', port=5000))
+    sock_thread = threading.Thread(socketio.run(app, host='192.168.43.7', port=5000))
     sock_thread.start()
 
     # host='192.168.137.135'
-    flask_thread = threading.Thread(app.run(host='127.0.0.1', port=5000))
+    flask_thread = threading.Thread(app.run(host='192.168.43.7', port=5000))
     flask_thread.start()

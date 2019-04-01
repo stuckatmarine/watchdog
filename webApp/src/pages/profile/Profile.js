@@ -17,7 +17,7 @@ import {
 import Widget from '../../components/Widget';
 import me from '../../data/queries/me';
 import s from './Profile.scss';
-const addr = 'http://127.0.0.1:5000';
+const addr = 'http://192.168.43.7:5000';
 
 class Profile extends PureComponent {
   constructor(props){
