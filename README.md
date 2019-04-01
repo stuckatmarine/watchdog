@@ -18,6 +18,7 @@ Be like Noah.<br/>
 ![Watchdog Architecture Diagram](/projectArchitecture.png)
 
 ## Task List
+![Watchdog Sketch and Task List](/initialSketchAndTaskList.jpg)
 ### First Iteration - Minimum Viable Product
 - [x] object recognition on raspberry pi
 - [x] server to communicate with pi/user/database
@@ -28,3 +29,4 @@ Be like Noah.<br/>
 ### Second iteration
 - [X] Optomize object recognition w tiny weights
 - [ ] Android application user interface for configuration/notifications
+
