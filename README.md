@@ -42,5 +42,12 @@ The user configuration can be changed in real time on the web-app or locally on 
 - [ ] Android application user interface for configuration/notifications
 - [ ] Train dog-digging data and add to classes
 
+## Authors
+
+|[<img src="https://avatars1.githubusercontent.com/u/33398082?s=460&v=4" width="128">](https://github.com/andrewnash)|[<img src="https://avatars1.githubusercontent.com/u/19956131?s=460&v=4" width="128">](https://github.com/stuckatmarine)
+|:---:|:---:|
+|[Andrew Nash](https://github.com/andrewnash)| [Mark Duffett](https://github.com/stuckatmarine)
+|<sup>Web App & Backend</sup>|<sup>Raspberry Pi Object Detection</sup>
+
 ## License
 Licensed under SPDX standard [BSD-4-clause](https://github.com/stuckatmarine/watchdog/blob/master/LICENSE.md) 
