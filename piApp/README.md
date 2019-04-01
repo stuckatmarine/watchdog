@@ -28,6 +28,13 @@ $ python watchdog.py
 ## Sample post yolo image
 ![Sample Post Yolo image with Dog](pics/sampleDog.jpg)
 
+## Features
+* Auto launch watchdog on startup with shell script: watchdogAutostart.sh
+* Get config file from server, else use local file: conf_json.json
+* Load either yolov2 or yolov2 tiny model via conf_json tiny value: model_configs.py or model_tiny_configs.py
+* Take image based on time interval: /pics/sampleDog.jpg
+* Send notification to server if a specific class is identified in the image: 200 is the sucessfull response code.
+
 ### Built With
 
 * [YOLOv2](https://pjreddie.com/darknet/yolo/) - Object detection
