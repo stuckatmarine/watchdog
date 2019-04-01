@@ -41,3 +41,6 @@ The user configuration can be changed in real time on the web-app or locally on 
 ### Third Iteration
 - [ ] Android application user interface for configuration/notifications
 - [ ] Train dog-digging data and add to classes
+
+## License
+Licensed under SPDX standard [BSD-4-clause](https://github.com/stuckatmarine/watchdog/blob/master/LICENSE.md) 
