@@ -1,5 +1,5 @@
 # Install Notes
-- *Make sure to use python2.7 (not python 3!, Tensorflow is not compatable on pi for 3+)*
+**Make sure to use python2.7 (not python 3!, Tensorflow is not compatable on pi for 3+)**
 - Run download_weights.sh to get weights (large files not normally stored on git)
 - Run watchdog.py, install dependencies with pip as needed</br>
 **To use autostart script** 
