@@ -14,11 +14,20 @@ Noah is notified if his dog digs or would like to be let inside/outside.<br/>
 Noah can focus on his studies and not worry about his dog.<br/>
 Be like Noah.<br/>
 
+
+## Solution
+The Watchdog (pi) requests a config file from the flask server, if response fails it uses a local file.<br/>
+It will then take pictures every 'intervalTime' seconds, and check the image for specific objects chosen by the user, using yolov2 or yolov2-tiny.<br/>
+If a desired object is found the image and yolo log data are sent to the server, stored in a mongoDB (database) and send to the user (SMS/Email/Web-App).<br/>
+The user configuration can be changed in real time on the web-app or locally on the Watchdog.<br/>
+
+
 ## Architecture
 ![Watchdog Architecture Diagram](/projectArchitecture.png)
 
 ## Task List
 ![Watchdog Sketch and Task List](/initialSketchAndTasks.jpg)
+
 ### First Iteration - Minimum Viable Product
 - [x] object recognition on raspberry pi
 - [x] server to communicate with pi/user/database
@@ -26,7 +35,9 @@ Be like Noah.<br/>
 - [X] Specifiy parameters for user to be notified about
 - [X] Notify user via email/sms
 
-### Second iteration
+### Second Iteration
 - [X] Optomize object recognition w tiny weights
-- [ ] Android application user interface for configuration/notifications
 
+### Third Iteration
+- [ ] Android application user interface for configuration/notifications
+- [ ] Train dog-digging data and add to classes
