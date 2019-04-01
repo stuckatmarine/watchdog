@@ -1,11 +1,11 @@
 ## Watchdog React Dashboard — An "[isomorphic](http://nerds.airbnb.com/isomorphic-javascript-future-web-apps/)" Web App
 
+## Quick Start
+
 ### Requirements
 
   * [Yarn](https://yarnpkg.com/) package manager
   * [Node.js](https://nodejs.org/) v6.5 or newer
-
-## Quick Start
 
 ### Install
 
