@@ -1,6 +1,6 @@
-# Watchdog
+## Watchdog
 
-## Problem
+### Problem
 Frank has a dog. <br/>
 Frank’s dog enjoys being outside for extended periods of time. <br/>
 Frank’s dog likes to go outside immediately when the upstairs tenants' dogs are outside and come in when they are not.<br/>
@@ -15,7 +15,7 @@ Noah can focus on his studies and not worry about his dog.<br/>
 Be like Noah.<br/>
 
 
-## Solution
+### Solution
 The Watchdog (pi) requests a config file from the flask server, if response fails it uses a local file.<br/>
 It will then take pictures every 'intervalTime' seconds, and check the image for specific objects chosen by the user, using yolov2 or yolov2-tiny.<br/>
 If a desired object is found the image and yolo log data are sent to the server, stored in a mongoDB (database) and send to the user (SMS/Email/Web-App).<br/>
@@ -23,7 +23,12 @@ The user configuration can be changed in real time on the web-app or locally on 
 
 
 ## Architecture
-![Watchdog Architecture Diagram](/projectArchitecture.png)
+
+### Stack Diagram
+![Watchdog Stack Diagram](/overview.PNG)
+
+### Sample Use Case
+![Watchdog Use Case Diagram](/projectArchitecture.png)
 
 ## Task List
 ![Watchdog Sketch and Task List](/initialSketchAndTasks.jpg)
