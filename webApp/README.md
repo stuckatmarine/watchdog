@@ -77,6 +77,18 @@ Before you start, take a moment to see how the project structure looks like:
 └── yarn.lock                   # Fixed versions of all the dependencies
 ```
 
+## Screenshots
+
+### Dashboard
+![Dashboard screenshot](dashboard.PNG)
+
+### Notification Settings
+![notification settings screenshot](notification_settings.PNG)
+
+### User Profile
+![profile screenshot](profile.PNG)
+
+
 ## Built using 
 * [React](https://facebook.github.io/react/)
 * [Bootstrap](http://getbootstrap.com/)
