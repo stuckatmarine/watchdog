@@ -7,28 +7,24 @@
 
 ## Quick Start
 
-#### 1. Get the latest version
+### Install
 
-After you have made sure you have installed all the above requirments. You can start by cloning the latest version of watchdog on your
-local machine by running:
-
-```shell
-$ git clone -o react-dashboard -b master --single-branch \
-      https://github.com/stuckatmarine/watchdog.git watchdog
-$ cd watchdog/webApp
+Install both run-time project dependencies and developer tools listed
+in [package.json](../package.json) file.
+```
+$ yarn install
 ```
 
-#### 2. Run `yarn install`
-
-This will install both run-time project dependencies and developer tools listed
-in [package.json](../package.json) file.
-
-#### 3. Run `yarn start`
+### 3. Run 
 
 This command will build the app from the source files (`/src`) into the output
 `/build` folder. As soon as the initial build completes, it will start the
 Node.js server (`node build/server.js`) and [Browsersync](https://browsersync.io/)
 with [HMR](https://webpack.github.io/docs/hot-module-replacement) on top of it.
+
+```shell
+$ yarn start
+```
 
 > [http://localhost:3000/](http://localhost:3000/) — Node.js server (`build/server.js`)<br>
 > [http://localhost:3000/graphql](http://localhost:3000/graphql) — GraphQL server and IDE<br>
