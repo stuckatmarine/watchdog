@@ -25,7 +25,7 @@ pip install the following libraries (or in an env)
 $ pip install flask flasksocketio flask_cors twilio environs pymongo imghdr
 ```
 
-## Run
+### Run
 
 Then simply run the flask server
 
